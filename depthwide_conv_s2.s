@@ -53,7 +53,7 @@ depthwise_convolution_stride2:
 		; r1 = Location 2 + offset1 (input)
 		; r2 = Location 3 + offset2 (output)
 		; r3 = width (x and y) - pad matrix (width + 2)
-		; r4 = num im2col columns - this is calculated from width (width/2 == width >> 1)
+		; r4 = num im2col columns - this is calculated from width ((width+2)/2 == width >> 1)
 		; Reorganizes Registers for imTwoColStrideTwoTwoD
 		;peek_stack()
 		lih r1, 0x0
@@ -97,7 +97,7 @@ depthwise_convolution_stride2:
 		;; MatMul
 		; r1 = Location 4 (Input) - weights for A matrix (r4 + 9 * FLOAT_SIZE * r9)
 		; r2 = Location 3 (Input) - data for B matrix (r3 + num im2col cols * 9 * FLOAT_SIZE * r9)
-		; r3 = Location 1 (Output) - output matrix (r1 + r5 * r5 * FLOAT_SIZE)
+		; r3 = Location 1 (Output) - output matrix (r1 + r5 * r5 * FLOAT_SIZE * r9)
 		; r4 = width of matrix - common length (3x3 for filter size)
 		; r5 = # cols for r1 (A matrix) - number of filters
 		; r6 = # rows in r2 (B matrix) - number of im2col columns
@@ -129,6 +129,7 @@ depthwise_convolution_stride2:
 		add r16, r3, r16		; r2 input
 		mul r17, r5, r5
 		shli r17, r17, 0x02		; r5 * r5 * FLOAT_SIZE
+		mul r17, r17, r9		; r5 * r5 * FLOAT_SIZE * r9
 		add r18, r1, r17		; r3 input
 		
 		; Assigns intermediates to regs to pass in
