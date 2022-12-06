@@ -46,7 +46,7 @@ depthwise_convolution_stride2:
 
 	;; For loop iterating through each z layer
 	lih r9, 0x0000
-	lil r9, 0x0001		; Z loop var
+	lil r9, 0x0000		; Z loop var
 	
 	layer_loop:
 		;; im2col (stride 2 2d)
