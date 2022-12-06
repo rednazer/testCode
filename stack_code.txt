@@ -2,7 +2,8 @@
 ;; As well as X registers
 ;; Let's assume X = 10
 ;; (10 reg + 1 addr) * 8 bytes per = 0x58
-
+; sp = r30
+; lr = r31
 
 ;; This will call another method and push current PC and register values onto the stack
 ; Use this when calling another function
