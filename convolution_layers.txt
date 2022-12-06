@@ -100,8 +100,24 @@ depthwise_convolution_stride2:
 	blzi layer_loop
 	
 	; Return to caller function
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;; Information we need
 ; r1 = Input_matrix (also output of current)		- location 1
 ; r2 = Output location for padded matrix			- location 2

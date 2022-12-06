@@ -14,17 +14,17 @@
 ; Use at the start of a called function
 %macro push_stack_callee()
 	addi sp, sp, -0x58
-	st36 r1, [sp+0x00]
-	st36 r2, [sp+0x08]
-	st36 r3, [sp+0x10]
-	st36 r4, [sp+0x18]
-	st36 r5, [sp+0x20]
-	st36 r6, [sp+0x28]
-	st36 r7, [sp+0x30]
-	st36 r8, [sp+0x38]
-	st36 r9, [sp+0x40]
-	st36 r10, [sp+0x48]
-	st36 lr, [sp+0x50]
+	st36 [sp+0x00], r1
+	st36 [sp+0x08], r2
+	st36 [sp+0x10], r3
+	st36 [sp+0x18], r4
+	st36 [sp+0x20], r5
+	st36 [sp+0x28], r6 
+	st36 [sp+0x30], r7
+	st36 [sp+0x38], r8
+	st36 [sp+0x40], r9
+	st36 [sp+0x48], r10
+	st36 [sp+0x50], lr
 %endmacro
 
 
