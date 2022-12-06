@@ -60,7 +60,7 @@ call_function:
 	ld36 r8, [r30+0x38]
 	ld36 r9, [r30+0x40]
 	ld36 r10, [r30+0x48]
-	lr36 r31, [r30+0x50]
+	ld36 r31, [r30+0x50]
 	addi r30, r30, 0x58
-	jmpr r31
+	jmpr r31, 0x00
 
