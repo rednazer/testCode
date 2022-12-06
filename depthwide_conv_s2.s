@@ -76,13 +76,14 @@ depthwise_convolution_stride2:
 		mul r12, r17, r17
 		mul r12, r12, r9
 		shli r12, r12, 0x02
-		; offset2 = ((num im2col cols) * 9) * r9 * FLOAT_SIZE
+		; offset2 = ((num im2col cols) * (num im2col cols) * 9) * r9 * FLOAT_SIZE
 		lih r13, 0x0000
 		lil r13, 0x0009		; r13 = 9
-		shli r13, r13, 0x02
+		shli r13, r13, 0x02	; r13 = 9 * FLOAT_SIZE
 		addi r16, r5, 0x02	; width (r16 = r5 + 2)
 		shri r15, r16, 0x01	; num im2col cols (r15 = r16/2)
-		mul r14, r15, r13
+		mul r14, r15, r15	; (num im2col cols) * (num im2col cols)
+		mul r14, r14, r13
 		mul r14, r14, r9
 		
 		; Assign input register values
