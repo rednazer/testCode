@@ -1,4 +1,4 @@
-%define FLOAT_SIZE 0x04
+;%define FLOAT_SIZE 0x04
 
 lih r1, 0x0
 lih r2, 0x0
