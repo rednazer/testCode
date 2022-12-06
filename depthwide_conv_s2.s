@@ -16,7 +16,7 @@ lil r6, 0x20
 
 bkpt 0x01
 jal depthwise_convolution_stride2
-bkpt 0x05
+bkpt 0x06
 
 halt
 
@@ -46,7 +46,7 @@ depthwise_convolution_stride2:
 
 	;; For loop iterating through each z layer
 	lih r9, 0x0000
-	lil r9, 0x0000		; Z loop var
+	lil r9, 0x0001		; Z loop var
 	
 	layer_loop:
 		;; im2col (stride 2 2d)
@@ -150,6 +150,8 @@ depthwise_convolution_stride2:
 	sub r20, r9, r6
 	blzi layer_loop
 	
+	bkpt 0x05
+
 	; Return to caller function
 	jmpr r31, 0x00
 
