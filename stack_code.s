@@ -1,7 +1,7 @@
 ; r30 = sp
 ; r31 = lr
 
-lih r30, 0x000
+lih r30, 0x0
 lil r30, 0x1F4
 addi r1, r1, 0x02
 addi r2, r1, 0x02
