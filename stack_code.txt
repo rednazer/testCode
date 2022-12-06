@@ -1,0 +1,87 @@
+;; The stack will push the current address of execution into the stack frame
+;; As well as X registers
+;; Let's assume X = 10
+;; (10 reg + 1 addr) * 8 bytes per = 0x58
+
+
+;; This will call another method and push current PC and register values onto the stack
+; Use this when calling another function
+%macro push_stack_caller(label jumpto_label)
+	jal jumpto_label
+%endmacro
+
+; Use at the start of a called function
+%macro push_stack_callee()
+	addi sp, sp, -0x58
+	st36 r1, [sp+0x00]
+	st36 r2, [sp+0x08]
+	st36 r3, [sp+0x10]
+	st36 r4, [sp+0x18]
+	st36 r5, [sp+0x20]
+	st36 r6, [sp+0x28]
+	st36 r7, [sp+0x30]
+	st36 r8, [sp+0x38]
+	st36 r9, [sp+0x40]
+	st36 r10, [sp+0x48]
+	st36 lr, [sp+0x50]
+%endmacro
+
+
+;; this will return from the current method pull the last stored PC and register vals
+;; This may require a Reg to store a return value into (or not)
+; Use this to return from a function call
+%macro pop_stack()
+	ld36 r1, [sp+0x00]
+	ld36 r2, [sp+0x08]
+	ld36 r3, [sp+0x10]
+	ld36 r4, [sp+0x18]
+	ld36 r5, [sp+0x20]
+	ld36 r6, [sp+0x28]
+	ld36 r7, [sp+0x30]
+	ld36 r8, [sp+0x38]
+	ld36 r9, [sp+0x40]
+	ld36 r10, [sp+0x48]
+	lr36 lr, [sp+0x50]
+	addi sp, sp, +0x58
+	jmpr lr
+%endmacro
+
+
+;; This will pull in the register values from the caller method and put them into the regs.
+;; This shouldn't require any vars
+%macro peek_stack()
+	ld36 r1, [sp+0x00]
+	ld36 r2, [sp+0x08]
+	ld36 r3, [sp+0x10]
+	ld36 r4, [sp+0x18]
+	ld36 r5, [sp+0x20]
+	ld36 r6, [sp+0x28]
+	ld36 r7, [sp+0x30]
+	ld36 r8, [sp+0x38]
+	ld36 r9, [sp+0x40]
+	ld36 r10, [sp+0x48]
+%endmacro
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	RISC-V clang rv32XXX 15.0
+	r31 - link reg
+	r30 - stack reg
+	

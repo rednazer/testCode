@@ -1,0 +1,36 @@
+;; This is the highest level program (unless there is a program to bootstrap this one)
+;; We will define each layer's
+
+;; Information format for each of the convolution blocks
+; Input_matrix (also output of current)		- location 1
+; NOT NEEDED: Output location for padded matrix
+; Output location for im2col				- location 3
+; Filter input location						- location 4
+; width of matrix (x and y)
+; depth of matrix (z)
+
+%define MATRIX_INPUT_OUTPUT_LOCATION		; Input from host/output from consolution layers
+%define PADDED_MATRIX_LOCATION				; Output for padding function
+%define IM2COL_MATRIX_LOCATION				; Output for im2col function
+%define WEIGHTS_LOCATION 
+
+mobilenet_architecture:
+	
+	; Conv2D
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
