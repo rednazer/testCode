@@ -13,7 +13,7 @@ test_target:
 	sub r20, r1, r2 ; 1-2 < 0
 	blzi top
 	blei top
-	bnzi top
+	;bnzi top
 	sub r20, r2, r1 ; 2-1 > 0
 	bgzi top
 	bgei top
