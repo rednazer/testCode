@@ -71,8 +71,9 @@ depthwise_convolution_stride2:
 		lil r6, 0x20
 
 		; r1 <= r2 + offset1; r2 <= r3 + offset2; r3 <= r5 + 2;
-		; offset1 = (r5 * r5) * r9 * FLOAT_SIZE
-		mul r12, r5, r5
+		; offset1 = ((r5+2) * (r5+2)) * r9 * FLOAT_SIZE ----- we use (r5+2) here because the padding in the previous step
+		addi r17, r5, 0x02
+		mul r12, r17, r17
 		mul r12, r12, r9
 		shli r12, r12, 0x02
 		; offset2 = ((num im2col cols) * 9) * r9 * FLOAT_SIZE
