@@ -2,7 +2,7 @@
 ; r31 = lr
 
 lih r30, 0x0
-lil r30, 0x1F4
+lil r30, 0x1f4
 addi r1, r1, 0x02
 addi r2, r1, 0x02
 addi r3, r1, 0x02
