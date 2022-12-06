@@ -23,29 +23,17 @@ halt
 call_function:
 	; Add function to stack
 	addi r30, r30, -0x58
-;	st36 r1, [r30+0x00]
-;	st36 r2, [r30+0x08]
-;	st36 r3, [r30+0x10]
-;	st36 r4, [r30+0x18]
-;	st36 r5, [r30+0x20]
-;	st36 r6, [r30+0x28]
-;	st36 r7, [r30+0x30]
-;	st36 r8, [r30+0x38]
-;	st36 r9, [r30+0x40]
-;	st36 r10, [r30+0x48]
-;	st36 r31, [r30+0x50]
-
-	st36 r30, r1, 0x00
-	st36 r30, r2, 0x08
-	st36 r30, r3, 0x10
-	st36 r30, r4, 0x18
-	st36 r30, r5, 0x20
-	st36 r30, r6, 0x28
-	st36 r30, r7, 0x30
-	st36 r30, r8, 0x38
-	st36 r30, r9, 0x40
-	st36 r30, r10, 0x48
-	st36 r30, r31, 0x50
+	st36 r1, [r30+0x00]
+	st36 r2, [r30+0x08]
+	st36 r3, [r30+0x10]
+	st36 r4, [r30+0x18]
+	st36 r5, [r30+0x20]
+	st36 r6, [r30+0x28]
+	st36 r7, [r30+0x30]
+	st36 r8, [r30+0x38]
+	st36 r9, [r30+0x40]
+	st36 r10, [r30+0x48]
+	st36 r31, [r30+0x50]
 
 	; Change vals
 	addi r1, r1, 0x02
@@ -74,6 +62,5 @@ call_function:
 	ld36 r10, [r30+0x48]
 	lr36 r31, [r30+0x50]
 	addi r30, r30, 0x58
-
 	jmpr r31
 
