@@ -87,7 +87,7 @@ depthwise_convolution_stride2:
 		and r3, r18, r17
 		and r4, r12, r12
 		and r5, r6, r6
-		and r6, r15, 15
+		and r6, r15, r15
 		
 		; Do a matrix multiply
 		push_stack_caller(matmulmodule)
