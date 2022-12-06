@@ -94,7 +94,7 @@ imTwoColStrideOneTwoD:
 ; We then can index into the vector to see the 4 values (or fewer) pulled
 ;					START LOCATION + row offset + (x + y * (width of input data))
 ; output_data[row][col] = r2 + (col * r4) + ((r5 + offset) * FLOAT_SIZE + (r6 + offset) * FLOAR_SIZE * r3)
-%macro write_output_elements(imm col_offset, imm y_offset)	
+%macro write_output_elements(imm col_offset, imm y_offset)
 	;; Setup a reg at the current column offset
 	lih r10, 0x0000
 	lil r10, col_offset

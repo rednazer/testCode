@@ -42,7 +42,7 @@ padMatrix:
 		st32 r10, [r2+0x00]
 		addi r2, r2, FLOAT_SIZE
 		
-		;; For loop y layer starts	
+		;; For loop y layer starts
 		y_loop_start:
 			
 			lih r5, 0x00000		; init x loop var = 0
