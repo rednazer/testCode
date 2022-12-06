@@ -98,12 +98,12 @@ depthwise_convolution_stride2:
 	
 		;; MatMul
 		; r1 = Location 4 (Input) - weights for A matrix (r4 + 9 * FLOAT_SIZE * r9)
-		; r2 = Location 3 (Input) - data for B matrix (r3 + num im2col cols * 9 * FLOAT_SIZE * r9)
+		; r2 = Location 3 (Input) - data for B matrix (r3 + (num im2col cols) * (num im2col cols) * 9 * FLOAT_SIZE * r9)
 		; r3 = Location 1 (Output) - output matrix (r1 + r5 * r5 * FLOAT_SIZE * r9)
 		; r4 = width of matrix - common length (3x3 for filter size)
 		; r5 = # cols for r1 (A matrix) - number of filters
 		; r6 = # rows in r2 (B matrix) - number of im2col columns
-		; TODO: REORGANIZE REGS FOR MatMul
+		; Reorganize registers for MatMul
 		;peek_stack()
 		lih r1, 0x0
 		lih r2, 0x0
@@ -127,7 +127,8 @@ depthwise_convolution_stride2:
 		
 		addi r15, r5, 0x02
 		shri r15, r15, 0x01		; num im2col cols
-		mul r16, r15, r13
+		mul r16, r15, r15
+		mul r16, r16, r13
 		add r16, r3, r16		; r2 input
 		mul r17, r5, r5
 		shli r17, r17, 0x02		; r5 * r5 * FLOAT_SIZE
@@ -137,7 +138,7 @@ depthwise_convolution_stride2:
 		; Assigns intermediates to regs to pass in
 		and r1, r14, r14
 		and r2, r16, r16
-		and r3, r18, r17
+		and r3, r18, r18
 		and r4, r12, r12
 		and r5, r6, r6
 		and r6, r15, r15
