@@ -1,6 +1,31 @@
-; r30 = sp
-; r31 = lr
-
-lih r30, 0x0
-lil r30, 0x1f4
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+bkpt 0x01
+jal test_target
+bkpt 0x03
+nop
+nop
+nop
+nop
+nop
 halt
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+test_target:
+	nop
+	nop
+	bkpt 0x02
+	jmpr r31, 0x00
+	
