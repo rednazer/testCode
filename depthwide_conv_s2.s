@@ -151,6 +151,6 @@ depthwise_convolution_stride2:
 	blzi layer_loop
 	
 	; Return to caller function
-
+	jmpr r31, 0x00
 
 
