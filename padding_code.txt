@@ -163,3 +163,4 @@ padMatrix:
 	cmp r7, r4
 	blzi padding_z_loop_start
 	
+jmpr r31, 0x00
