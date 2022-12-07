@@ -153,7 +153,7 @@ padMatrix:
 		lil r5, 0x00000
 		padding_zero_loop_two_start:
 			; Write zero vector to dest
-			vsti 0b1111, [r2+0x00], v2
+			vsti 0b1111, [r2+=0x00], v2
 			addi r2, r2, 0x10
 		addi r5, r5, 0x04
 		sub r20, r5, r9		; (r5 - r9 < 0)
