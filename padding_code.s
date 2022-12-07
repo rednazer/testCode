@@ -112,14 +112,14 @@ padMatrix:
 			
 			; If 0, then write whole vector of 0's (we have r10 = 0)
 			subi r20, r21, 0x00
-			bgzi, padding_one
+			bgzi padding_one
 			vsplat 0b1111, v1, r10		; vector of zeros
 			jmp padding_end_of_row
 			
 			; If 1, then write V1.0=r17, V1.234=0
 			padding_one:
 				subi r20, r21, 0x01
-				bgzi, padding_two
+				bgzi padding_two
 				vsplat 0b1000, v1, r17
 				vsplat 0b0111, v1, r10
 				jmp padding_end_of_row
@@ -127,7 +127,7 @@ padMatrix:
 			; If 2, then write V1.0=r17, V1.1 <- V1.0, V1.23 = 0
 			padding_two:
 				subi r20, r21, 0x01
-				bgzi, padding_three
+				bgzi padding_three
 				vswizzle 0b1111, v1, v1, 0, 0, 1, 2
 				vsplat 0b1000, v1, r17
 				vsplat 0b0011, v1, r10
