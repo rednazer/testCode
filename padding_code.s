@@ -36,8 +36,6 @@ padMatrix:
 	;; For loop z layer starts
 	padding_z_loop_start:
 		
-		bkpt 0x02
-
 		lih r6, 0x00000		; init y loop var = 0
 		lil r6, 0x00000
 		
@@ -49,14 +47,12 @@ padMatrix:
 			vsti 0b1111, [r2+=0x00], v2
 			addi r2, r2, 0x10
 		addi r5, r5, 0x04
-		sub r20, r5, r9		; (r5 - r9 < 0)
+		cmp r5, r9		; (r5 - r9 < 0)
 		blzi padding_zero_loop_one_start
 		
 		;; For loop y layer starts
 		padding_y_loop_start:
 			
-			bkpt 0x03
-
 			lih r5, 0x00000		; init x loop var = 0
 			lil r5, 0x00000
 			
@@ -65,8 +61,6 @@ padMatrix:
 			
 			padding_x_loop_start:
 				
-				bkpt 0x04
-
 				; Pull vector: start + ((x val) + (ceil x len) * (y val) + (ceil x len) * (y len) * (z val)) * 0x04
 				; Address: r1 + (r5 + r9 * r6 + r9 * r3 * r7) << 0x02
 				mul r12, r9, r6			; r12=r9*r6
@@ -93,12 +87,10 @@ padMatrix:
 				
 			; X loop branch conditionals (r5 - r9 < 4)
 			addi r5, r5, 0x04
-			sub r20, r5, r9
-			subi r20, r20, 0x04
+			subi r20, r5, 0x04
+			cmp r20, r9
 			blzi padding_x_loop_start
 			
-			bkpt 0x05
-
 			;; Write last vector 
 			; Pull vector
 			mul r12, r9, r6			; r12=r9*r6
@@ -115,14 +107,14 @@ padMatrix:
 			addi r21, r21, 0x05			; Between 0-3
 			
 			; If 0, then write whole vector of 0's (we have r10 = 0)
-			subi r20, r21, 0x00
+			cmpi r21, 0x00
 			bgzi padding_one
 			vsplat 0b1111, v1, r10		; vector of zeros
 			jmp padding_end_of_row
 			
 			; If 1, then write V1.0=r17, V1.234=0
 			padding_one:
-				subi r20, r21, 0x01
+				cmpi r21, 0x01
 				bgzi padding_two
 				vsplat 0b1000, v1, r17
 				vsplat 0b0111, v1, r10
@@ -130,7 +122,7 @@ padMatrix:
 				
 			; If 2, then write V1.0=r17, V1.1 <- V1.0, V1.23 = 0
 			padding_two:
-				subi r20, r21, 0x01
+				cmpi r21, 0x01
 				bgzi padding_three
 				vswizzle 0b1111, v1, v1, 0, 0, 1, 2
 				vsplat 0b1000, v1, r17
@@ -149,7 +141,7 @@ padMatrix:
 				
 		; Y loop branch conditionals (r6 - r3 < 0)
 		addi r6, r6, 0x01
-		sub r20, r6, r3
+		cmp r6, r3
 		blzi padding_y_loop_start
 		
 		;; Add full row of 0's at end array
@@ -160,10 +152,10 @@ padMatrix:
 			vsti 0b1111, [r2+=0x00], v2
 			addi r2, r2, 0x10
 		addi r5, r5, 0x04
-		sub r20, r5, r9		; (r5 - r9 < 0)
+		cmp r5, r9		; (r5 - r9 < 0)
 		blzi padding_zero_loop_two_start
 		
 	; Z loop branch conditionals (r7 - r4 < 0)
 	addi r7, r7, 0x01
-	sub r20, r7, r4
+	cmp r7, r4
 	blzi padding_z_loop_start
