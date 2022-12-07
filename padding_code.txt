@@ -69,7 +69,8 @@ padMatrix:
 				add r14, r5, r12
 				add r14, r14, r13
 				shli r14, r14, 0x02		; (r5 + r9 * r6 + r9 * r3 * r7) << 0x02
-				vldr 0b1111, v1, [r1+=r14]
+				add r20, r1, r14
+				vldi 0b1111, v1, [r20+=0x00]
 				
 				; Shift reg values right 1 (store V1.3 into reg)
 				vidx r16, v1, 3
@@ -99,7 +100,8 @@ padMatrix:
 			add r14, r5, r12
 			add r14, r14, r13
 			shli r14, r14, 0x02		; (r5 + r9 * r6 + r9 * r3 * r7) << 0x02
-			vldr 0b1111, v1, [r1+=r14]
+			add r20, r1, r14
+			vldi 0b1111, v1, [r20+=0x00]
 			
 			; Check number of remaining vals (width + 1) - (padded # floats - 4)
 			; # left = r3 - r9 + 5
