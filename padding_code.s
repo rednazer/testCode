@@ -42,7 +42,7 @@ padMatrix:
 		lil r5, 0x00000
 		padding_zero_loop_one_start:
 			; Write zero vector to dest
-			vsti 0b1111, [r2+0x00], v2
+			vsti 0b1111, [r2+=0x00], v2
 			addi r2, r2, 0x10
 		addi r5, r5, 0x04
 		sub r20, r5, r9		; (r5 - r9 < 0)
@@ -71,7 +71,7 @@ padMatrix:
 				add r14, r5, r12
 				add r14, r14, r13
 				shli r14, r14, 0x02		; (r5 + r9 * r6 + r9 * r3 * r7) << 0x02
-				vldr 0b1111, v1, [r1+r14]
+				vldr 0b1111, v1, [r1+=r14]
 				
 				; Shift reg values right 1 (store V1.3 into reg)
 				vindx r16, v1, 3
@@ -81,7 +81,7 @@ padMatrix:
 				vsplat 0b1000, v1, r17
 				
 				; Write to destination (destination increments as written to)
-				vsti 0b1111, [r2+0x00], v1
+				vsti 0b1111, [r2+=0x00], v1
 				addi r2, r2, 0x10
 				
 				; new reg val into old reg val
@@ -103,7 +103,7 @@ padMatrix:
 			add r14, r5, r12
 			add r14, r14, r13
 			shli r14, r14, 0x02		; (r5 + r9 * r6 + r9 * r3 * r7) << 0x02
-			vldr 0b1111, v1, [r1+r14]
+			vldr 0b1111, v1, [r1+=r14]
 			
 			; Check number of remaining vals (width + 1) - (padded # floats - 4)
 			; # left = r3 - r9 + 5
@@ -140,7 +140,7 @@ padMatrix:
 				vsplat 0b0011, v1, r10
 				
 			padding_end_of_row:
-				vsti 0b1111, [r2+0x00], v1
+				vsti 0b1111, [r2+=0x00], v1
 				addi r2, r2, 0x10
 				
 		; Y loop branch conditionals (r6 - r3 < 0)
