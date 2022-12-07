@@ -85,9 +85,9 @@ padMatrix:
 				; new reg val into old reg val
 				and r17, r16, r16
 				
-			; X loop branch conditionals (r5 - r9 < 4)
+			; X loop branch conditionals (r5 - r9 < -4)
 			addi r5, r5, 0x04
-			subi r20, r5, 0x04
+			addi r20, r5, 0x04
 			cmp r20, r9
 			blzi padding_x_loop_start
 			
