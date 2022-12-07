@@ -13,7 +13,7 @@
 
 ; Use at the start of a called function
 %macro push_stack_callee()
-	addi sp, sp, -0x58
+	subi sp, sp, 0x58
 	st36 [sp+0x00], r1
 	st36 [sp+0x08], r2
 	st36 [sp+0x10], r3

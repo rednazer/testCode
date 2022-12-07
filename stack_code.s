@@ -22,7 +22,7 @@ halt
 
 call_function:
 	; Add function to stack
-	addi r30, r30, -0x58
+	subi r30, r30, 0x58
 	st36 [r30+0x00], r1
 	st36 [r30+0x08], r2
 	st36 [r30+0x10], r3

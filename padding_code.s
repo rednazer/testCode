@@ -1,6 +1,10 @@
 ; Setup mem
 
 ; Setup Regs
+lil r1, 0x0000
+lil r2, 0x0200
+lil r3, 0x0004
+lil r4, 0x0001
 
 ; Call padmatrix
 bkpt 0x01
