@@ -11,6 +11,9 @@ bkpt 0x01
 jal padMatrix
 bkpt 0x06
 
+halt
+halt
+
 ;; Used for all convolutions that aren't pointwise convolutions
 ;; pads 1 layer of 0's around the x and y of the matrices
 ;; Moves the input and output as the program writes
@@ -164,3 +167,4 @@ padMatrix:
 	blzi padding_z_loop_start
 	
 jmpr r31, 0x00
+halt
