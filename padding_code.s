@@ -4,7 +4,7 @@
 
 ; Call padmatrix
 bkpt 0x01
-jal test_target
+jal padMatrix
 bkpt 0x06
 
 
