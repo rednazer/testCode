@@ -1,0 +1,135 @@
+%define FLOAT_SIZE 0x04
+
+;; Used for all convolutions that aren't pointwise convolutions
+;; pads 1 layer of 0's around the x and y of the matrices
+;; Moves the input and output as the program writes
+; r1 = input_data start location
+; r2 = output_data write location
+; r3 = width of input data (x_len and y_len)
+; r4 = number of filters (z_len)
+padMatrix:
+	
+	lih r10, 0x00000	; Load 0 into a reg for padding
+	lil r10, 0x00000
+	vsplat 0b1111, v2, r10	; load 0s into v2 vector register
+	
+	lih r7, 0x00000		; Set up z loop var
+	lil r7, 0x00000
+	
+	;; For loop z layer starts
+	z_loop_start:
+		
+		lih r6, 0x00000		; init y loop var = 0
+		lil r6, 0x00000
+		
+		lih r5, 0x00000		; init zeros loop var = 0
+		lil r5, 0x00000
+		
+		; Write a row of 0's to the output (start of matrix layer)
+		first_zeros_loop_start:
+				
+			;; Write values from current row to output
+			write_vector(v2, r5)
+	
+		;; Check x loop conditional
+		; branch if r5 < r3 -> r5 - r3 < 0
+		addi r5, r5, 0x04		; increment by the size of a vector (not float size)
+		sub r20, r5, r3
+		blzi first_zeros_loop_start
+		; Write 2 extra zeros before continuing to loop
+		st32 r10, [r2+0x00]
+		addi r2, r2, FLOAT_SIZE
+		st32 r10, [r2+0x00]
+		addi r2, r2, FLOAT_SIZE
+		
+		;; For loop y layer starts
+		y_loop_start:
+			
+			lih r5, 0x00000		; init x loop var = 0
+			lil r5, 0x00000
+			
+			; Write a 0 to the output (start of line)
+			st32 r10, [r2+0x00]
+			addi r2, r2, FLOAT_SIZE
+			
+			;; For loop x_filter starts
+			x_loop_start:
+				
+				;; Get next input values and write them to output output
+				; Get input values into v1
+				vldi 0b1111, v1, [r1+=0x00]
+				; write to output
+				write_vector(v1, r5)
+
+			;; Check x loop conditional
+			; branch if r5 < r3 -> r5 - r3 < 0
+			addi r5, r5, 0x04		; increment by the size of a vector (not float size)
+			sub r20, r5, r3
+			blzi x_loop_start
+			; else write a 0 to the output (end of line)
+			st32 r10, [r2+0x00]
+			addi r2, r2, FLOAT_SIZE
+			
+		;; Check y loop conditional
+		; branch if r6 < r3 -> r5 - r3 < 0
+		addi r6, r6, 0x01
+		sub r20, r6, r3
+		blzi y_loop_start
+		; else write a row of 0's to the output (end of matrix layer)
+		
+		lih r5, 0x00000		; init zeros loop var = 0
+		lil r5, 0x00000
+		
+		; Write a row of 0's to the output (start of matrix layer)
+		second_zeros_loop_start:
+				
+			;; Write values from current row to output
+			write_vector(v2, r5)
+	
+		;; Check x loop conditional
+		; branch if r5 < r3 -> r5 - r3 < 0
+		addi r5, r5, 0x04		; increment by the size of a vector (not float size)
+		sub r20, r5, r3
+		blzi second_zeros_loop_start
+		; Write 2 extra zeros before continuing to loop
+		st32 r10, [r2+0x00]
+		addi r2, r2, FLOAT_SIZE
+		st32 r10, [r2+0x00]
+		addi r2, r2, FLOAT_SIZE
+		
+	;; Check z loop conditional
+	; branch if r7 < r4 -> r7 - r4 < 0
+	addi r7, r7, 0x01
+	sub r20, r7, r4
+	blzi z_loop_start
+	;; Return if z loop not taken
+	
+	
+%macro write_vector(vreg write_vector, reg x_position)
+	;; Write reg
+	vsti 0b1111, write_vector, [r2+=0x00]
+	
+	;; Check if 4 vals left (x_position + 4 < r3 -> x_pos + 4 - r3 < 0)
+	addi r20, x_position, 0x04
+	sub r20, r20, r3
+	bltz .endOfRow
+	
+	; If so add 16 to r1 and r2
+	addi r1, r1, 0x10
+	addi r2, r2, 0x10
+	jmp write_return
+	
+	; else add number remaining to r1 and r2
+	.endOfRow:
+		; r3 - x_position
+		sub r20, r3, x_position
+		add r1, r1, r20
+		add r2, r2, r20
+		
+	.write_return:
+		; End of the macro
+		
+%endmacro
+
+
+
