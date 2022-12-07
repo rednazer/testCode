@@ -58,7 +58,7 @@ padMatrix:
 				vldr 0b1111, v1, [r1+=r14]
 				
 				; Shift reg values right 1 (store V1.3 into reg)
-				vindx r16, v1, 3
+				vidx r16, v1, 3
 				vswizzle 0b1111, v1, v1, 0, 0, 1, 2
 				
 				; Write to prev reg val into V1.0
