@@ -15,13 +15,13 @@ imTwoColStrideOneTwoD:
 	lil r6, 0x00000
 
 	;; For loop y_filter starts
-	y_loop_start:
+	im_two_one_y_loop_start:
 
 		lih r5, 0x00000		; init x loop var = 0
 		lil r5, 0x00000
 
 		;; For loop x_filter starts
-		x_loop_start:
+		im_two_one_x_loop_start:
 			;; Get input vector
 			addi r25, r3, 0x05	; (the padded width) r25 = (r3 + 2 + 3) >> 2 << 2
 			shri r25, r25, 0x02
@@ -42,44 +42,63 @@ imTwoColStrideOneTwoD:
 			
 			;; 2UP code start
 				subi r20, r6, 0x02	; Check if y < 2 (to skip 2UP)
-				blzi one_up_start
-				write_output_elements(0x06, 0x02)	; Use to write vals to output
+				blzi im_two_one_one_up_start
+				
+				; write_output_elements(0x06, 0x02) ; Use to write vals to output
+				; r10 = col_offset
+				lih r10, 0x0000
+				lil r10, 0x06
+				; r7 = y_offset
+				lih r7, 0x0000
+				lil r7, 0x02
+				jal im_two_one_write_output_elements
 
-			one_up_start:
+			im_two_one_one_up_start:
 				;; 1UP code starts
 				subi r20, r6, 0x01	; Check if y < 1 (to skip 1UP)
 				blzi skip_2up
 				addi r19, r3, 0x01	; Also check if y >= (width of input) - 1
 				sub r20, r6, r19
-				bgei zero_up_start
-				write_output_elements(0x03, 0x01)	; Use to write vals to output
+				bgei im_two_one_zero_up_start
+				
+				; write_output_elements(0x03, 0x01)	; Use to write vals to output
+				; r10 = col_offset
+				lih r10, 0x0000
+				lil r10, 0x03
+				; r7 = y_offset
+				lih r7, 0x0000
+				lil r7, 0x01
+				jal im_two_one_write_output_elements
 
-			zero_up_start:
+			im_two_one_zero_up_start:
 				;; 0UP code starts
 				addi r19, r3, 0x02	; Check if y >= (width of input) - 2
 				sub r20, r6, r19
-				bgei check_branch_conditionals
-				write_output_elements(0x00, 0x00)	; Use to write vals to output
+				bgei im_two_one_check_branch_conditionals
+				
+				; write_output_elements(0x00, 0x00)	; Use to write vals to output
+				; r10 = col_offset
+				lih r10, 0x0000
+				lil r10, 0x00
+				; r7 = y_offset
+				lih r7, 0x0000
+				lil r7, 0x00
+				jal im_two_one_write_output_elements
 
-		check_branch_conditionals:
+		im_two_one_check_branch_conditionals:
 		;; Check loop conditionals
 		; Branch to x_loop_start (check if r5 + 4 < width of input data)
 		addi r5, r5, 0x04
 		sub r20, r25, r5				; (padded width) - (r5 + 4) > 0
-		bgzi x_loop_start	; Branch to start of x loop
+		bgzi im_two_one_x_loop_start	; Branch to start of x loop
 
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
 	addi r6, r6, 0x01
 	sub r20, r3, r6
-	bgzi y_loop_start	; branch to start of y loop
-
+	bgzi im_two_one_y_loop_start	; branch to start of y loop
 
 	;; If y loop not branched to, then im2col is done, so return here
-
-
-
-
-
+	
 
 ; r1 = input_data start location
 ; r2 = output_data write location
@@ -100,110 +119,142 @@ imTwoColStrideOneTwoD:
 ; We then can index into the vector to see the 4 values (or fewer) pulled
 ;					START LOCATION + row offset + (x + y * (width of input data))
 ; output_data[row][col] = r2 + (col * r4) + ((r5 + offset) * FLOAT_SIZE + (r6 + offset) * FLOAR_SIZE * r3)
-%macro write_output_elements(imm col_offset, imm y_offset)
-	;; Setup a reg at the current column offset
-	lih r10, 0x0000
-	lil r10, col_offset
+;%macro write_output_elements(imm col_offset (r10), imm y_offset (r7))
+im_two_one_write_output_elements:
+	; store r31 -> r24
+	and r24, r31, r31
+	
 	;; 2 left
 	; Skip if r5 == 0
+		lih r9, 0x0000
+		lil r9, 0x0000
+		subi r9, r9, 0x02	; Load -0x02 into r9
 		subi r20, r5, 0x00
 		bezi .one_left
 		addi r11, r10, 0x02
-		write_output_location(r26, r11, -0x02, y_offset)
+		;write_output_location(r26, r11, -0x02, y_offset)
+		; r11 = column_index - already assigned
+		; r9 = x_offset - assignment already done
+		; r7 = y_offset - no assignment needed
+		; r8 = input_reg - do before calling
+		and r8, r26, r26
+		jal im_two_one_write_output_location
 
 	.one_left:
 		;; 1 left
 		; Skip if r5 == 0 and if r5 + 1 >= r3
+		addi r9, r9, 0x01
 		subi r20, r5, 0x00
 		bezi .zero_left
 		addi r19, r5, 0x01
 		subi r20, r19, r3
-		bgei zero_left
+		bgei .zero_left
 		addi r11, r10, 0x01
-		write_output_location(r26, r11, -0x01, y_offset)
+		; write_output_location(r26, r11, -0x01, y_offset)
+		and r8, r26, r26
+		jal im_two_one_write_output_location
 		addi r11, r10, 0x02
-		write_output_location(r27, r11, -0x01, y_offset)
+		; write_output_location(r27, r11, -0x01, y_offset)
+		and r8, r27, r27
+		jal im_two_one_write_output_location
 
 	.zero_left:
 		;; 0 left
 		; Skip if r1 + 2 >= r3
+		addi r9, r9, 0x01
 		addi r19, r5, 0x02
 		subi r20, r19, r3
-		bgei zero_left
+		bgei .one_right
 		addi r11, r10, 0x00
-		write_output_location(r26, r11, 0x00, y_offset)
+		; write_output_location(r26, r11, 0x00, y_offset)
+		and r8, r26, r26
+		jal im_two_one_write_output_location
 		addi r11, r10, 0x01
-		write_output_location(r27, r11, 0x00, y_offset)
+		; write_output_location(r27, r11, 0x00, y_offset)
+		and r8, r27, r27
+		jal im_two_one_write_output_location
 		addi r11, r10, 0x02
-		write_output_location(r28, r11, 0x00, y_offset)
+		; write_output_location(r28, r11, 0x00, y_offset)
+		and r8, r28, r28
+		jal im_two_one_write_output_location
 
 	.one_right:
 		;; 1 right
 		; Skip if r1 + 3 >= r3
+		addi r9, r9, 0x01
 		addi r19, r5, 0x03
 		subi r20, r19, r3
-		bgei zero_left
+		bgei .two_right
 		addi r11, r10, 0x00
-		write_output_location(r27, r11, 0x01, y_offset)
+		; write_output_location(r27, r11, 0x01, y_offset)
+		and r8, r27, r27
+		jal im_two_one_write_output_location
 		addi r11, r10, 0x01
-		write_output_location(r28, r11, 0x01, y_offset)
+		; write_output_location(r28, r11, 0x01, y_offset)
+		and r8, r28, r28
+		jal im_two_one_write_output_location
 		addi r11, r10, 0x02
-		write_output_location(r29, r11, 0x01, y_offset)
+		; write_output_location(r29, r11, 0x01, y_offset)
+		and r8, r29, r29
+		jal im_two_one_write_output_location
 
 	.two_right:
 		;; 2 right
 		; Skip if r1 + 4 >= r3
+		addi r9, r9, 0x01
 		addi r19, r5, 0x04
 		subi r20, r19, r3
-		bgei zero_left
+		bgei .three_right
 		addi r11, r10, 0x00
-		write_output_location(r28, r11, 0x02, y_offset)
+		; write_output_location(r28, r11, 0x02, y_offset)
+		and r8, r28, r28
+		jal im_two_one_write_output_location
 		addi r11, r10, 0x01
-		write_output_location(r29, r11, 0x02, y_offset)
+		; write_output_location(r29, r11, 0x02, y_offset)
+		and r8, r29, r29
+		jal im_two_one_write_output_location
 	
 	.three_right:
 		;; 3 right
 		; Skip if r1 + 5 >= r3
+		addi r9, r9, 0x01
 		addi r19, r5, 0x05
 		subi r20, r19, r3
-		bgei zero_left
+		bgei .write_return
 		addi r11, r10, 0x00
-		write_output_location(r29, r11, 0x03, y_offset)
-
-%endmacro
+		; write_output_location(r29, r11, 0x03, y_offset)
+		and r8, r29, r29
+		jal im_two_one_write_output_location
+		
+	.write_return:
+		; load r31 <- r24
+		and r31, r24, r24
+		jmpr r31, 0x0
+		
+;%endmacro
 
 ;; write_output_location performs a write to an output location based on given register and locations
 ;					START LOCATION + row offset + (x + y * (padded width of input data))
 ; output_data[row][col] = r2 + (col * r4) + ((r5 + x_offset) + (r6 - y_offset) * r25) * FLOAT_SIZE
 ; TODO: CHANGE (col * r4) TO ALSO MULTIPLY BY FLOAT_SIZE
-%macro write_output_location(reg input_reg, reg column_index, imm x_offset, imm y_offset)
-	mul r12, r4, column_index	; this is the column offset
-	addi r13, r5, x_offset
-	subi r14, r6, y_offset
+;%macro write_output_location(reg input_reg, reg column_index, imm x_offset, imm y_offset)
+; r8 = input_reg
+; r11 = column_index - already assigned
+; r9 = x_offset - assignment already done
+; r7 = y_offset - no assignment needed
+im_two_one_write_output_location:
+	mul r12, r4, r11	; this is the column offset
+	add r13, r5, r9
+	sub r14, r6, r7
 	mul r14, r14, r25
 	add r15, r13, r14
 	shli r15, r15, 0x02			; this is the row offset
 	add r16, r2, r12
-	add r11, r16, r15			; this is the output location
+	add r17, r16, r15			; this is the output location
 	
-	; Store to r11 with value of input reg
-	st32 input_reg [r11+=0x00]
-%endmacro
-
-
-  r1: 0x000000004
-  r2: 0x000000004
-  r3: 0x000000004
-  r4: 0x000000004
-  r5: 0x000000007
-  r6: 0x000000020
-
-
-
-
-Where did you say to look for macro info?
-	Is it possible to pass constants into macros? -> what would the format be (prolly not how I'm doing it)
-I'm note sure how scoping works for labels. Are local labels within file? or how does it work?
-
-
+	; Store to r17 with value of input reg
+	st32 r8 [r17+=0x00]
+	
+	jmpr r31, 0x0
+;%endmacro
 
