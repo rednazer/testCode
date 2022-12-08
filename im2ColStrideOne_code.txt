@@ -41,6 +41,7 @@ imTwoColStrideOneTwoD:
 		im_two_one_x_loop_start:
 			;; Get input vector
 			
+			bkpt 0x02
 			
 			mul r12, r25, r6
 			add r12, r12, r5
@@ -106,7 +107,7 @@ imTwoColStrideOneTwoD:
 		cmp r25, r5				; (padded width) - (r5 + 4) > 0
 		bgzi im_two_one_x_loop_start	; Branch to start of x loop
 		
-		bkpt 0x02
+		bkpt 0x03
 		
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
 	addi r6, r6, 0x01
