@@ -79,7 +79,7 @@ padMatrix:
 				vswizzle 0b1111, v1, v1, 0, 0, 1, 2
 				
 				; Write to prev reg val into V1.0
-				vsplat 0b1000, v1, r17
+				vsplat 0b0001, v1, r17
 				
 				; Write to destination (destination increments as written to)
 				vsti 0b1111, [r2+=0x00], v1
@@ -120,8 +120,8 @@ padMatrix:
 			padding_one:
 				cmpi r21, 0x01
 				bgzi padding_two
-				vsplat 0b1000, v1, r17
-				vsplat 0b0111, v1, r10
+				vsplat 0b0001, v1, r17
+				vsplat 0b1110, v1, r10
 				jmp padding_end_of_row
 				
 			; If 2, then write V1.0=r17, V1.1 <- V1.0, V1.23 = 0
@@ -129,15 +129,15 @@ padMatrix:
 				cmpi r21, 0x02
 				bgzi padding_three
 				vswizzle 0b1111, v1, v1, 0, 0, 1, 2
-				vsplat 0b1000, v1, r17
-				vsplat 0b0011, v1, r10
+				vsplat 0b0001, v1, r17
+				vsplat 0b1100, v1, r10
 				jmp padding_end_of_row
 			
 			; If 3, then write V1.0=r17, V1.1 <- V1.0, V1.2 <- V1.1, V1.3 = 0
 			padding_three:
 				vswizzle 0b1111, v1, v1, 0, 0, 1, 2
-				vsplat 0b1000, v1, r17
-				vsplat 0b0011, v1, r10
+				vsplat 0b0001, v1, r17
+				vsplat 0b1100, v1, r10
 				
 			padding_end_of_row:
 				vsti 0b1111, [r2+=0x00], v1
