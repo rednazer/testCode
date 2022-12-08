@@ -253,7 +253,7 @@ im_two_one_write_output_location:
 	add r17, r16, r15			; this is the output location
 	
 	; Store to r17 with value of input reg
-	st32 r8 [r17+=0x00]
+	st32 r8, [r17+=0x00]
 	
 	jmpr r31, 0x0
 ;%endmacro
