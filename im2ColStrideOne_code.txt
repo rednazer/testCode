@@ -38,7 +38,7 @@ imTwoColStrideOneTwoD:
 		;; For loop x_filter starts
 		im_two_one_x_loop_start:
 			;; Get input vector
-			addi r25, r3, 0x05	; (the padded width) r25 = (r3 + 2 + 3) >> 2 << 2
+			addi r25, r3, 0x03	; (the padded width) r25 = (r3 + 3) >> 2 << 2
 			shri r25, r25, 0x02
 			shli r25, r25, 0x02
 			mul r25, r25, r6
@@ -252,15 +252,18 @@ halt
 
 ;; write_output_location performs a write to an output location based on given register and locations
 ;					START LOCATION + row offset + (x + y * (padded width of input data))
-; output_data[row][col] = r2 + (col * r4) + ((r5 + x_offset) + (r6 - y_offset) * r25) * FLOAT_SIZE
-; TODO: CHANGE (col * r4) TO ALSO MULTIPLY BY FLOAT_SIZE
+; output_data[row][col] = r2 + (col * ceil(r4*r4)) + ((r5 + x_offset) + (r6 - y_offset) * r25) * FLOAT_SIZE
 ;%macro write_output_location(reg input_reg, reg column_index, imm x_offset, imm y_offset)
 ; r8 = input_reg
 ; r11 = column_index - already assigned
 ; r9 = x_offset - assignment already done
 ; r7 = y_offset - no assignment needed
 im_two_one_write_output_location:
-	mul r12, r4, r11	; this is the column offset
+	mul r12, r4, r4
+	addi r12, r12, 0x03	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
+	shri r12, r12, 0x02
+	shli r12, r12, 0x02
+	mul r12, r12, r11	; this is the column offset
 	add r13, r5, r9
 	sub r14, r6, r7
 	mul r14, r14, r25
