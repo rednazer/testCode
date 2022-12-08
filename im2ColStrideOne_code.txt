@@ -23,10 +23,14 @@ imTwoColStrideOneTwoD:
 		;; For loop x_filter starts
 		x_loop_start:
 			;; Get input vector
-			; r13 = r12 * FLOAT_SIZE same as r13 = r12 << 2 (a float is 0x4)
-			mul r11, r6, r3
-			add r12, r11, r5
-			shli r13, r12, 0x02
+			addi r25, r3, 0x05	; (the padded width) r25 = (r3 + 2 + 3) >> 2 << 2
+			shri r25, r25, 0x02
+			shli r25, r25, 0x02
+			mul r25, r25, r6
+			
+			
+			add r12, r25, r5
+			shli r13, r12, 0x02		; r13 = r12 * FLOAT_SIZE same as r13 = r12 << 2 (a float is 0x4)
 			add r14, r1, r13
 			vldi 0b1111, v1, [r14+=0x00]
 			; At this point v1 holds the input values
@@ -39,7 +43,7 @@ imTwoColStrideOneTwoD:
 			;; 2UP code start
 				subi r20, r6, 0x02	; Check if y < 2 (to skip 2UP)
 				blzi one_up_start
-				write_output_elements(0x06, -0x02)	; Use to write vals to output
+				write_output_elements(0x06, 0x02)	; Use to write vals to output
 
 			one_up_start:
 				;; 1UP code starts
@@ -48,7 +52,7 @@ imTwoColStrideOneTwoD:
 				addi r19, r3, 0x01	; Also check if y >= (width of input) - 1
 				sub r20, r6, r19
 				bgei zero_up_start
-				write_output_elements(0x03, -0x01)	; Use to write vals to output
+				write_output_elements(0x03, 0x01)	; Use to write vals to output
 
 			zero_up_start:
 				;; 0UP code starts
@@ -61,7 +65,7 @@ imTwoColStrideOneTwoD:
 		;; Check loop conditionals
 		; Branch to x_loop_start (check if r5 + 4 < width of input data)
 		addi r5, r5, 0x04
-		sub r20, r3, r5
+		sub r20, r25, r5				; (padded width) - (r5 + 4) > 0
 		bgzi x_loop_start	; Branch to start of x loop
 
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
@@ -80,6 +84,7 @@ imTwoColStrideOneTwoD:
 ; r1 = input_data start location
 ; r2 = output_data write location
 ; r3 = width of input data
+; r25 = padded width of input
 ; r4 = # of output cols
 ; r5 = x loop var
 ; r6 = y loop var
@@ -91,6 +96,7 @@ imTwoColStrideOneTwoD:
 ;; For all data values:
 ; This will be the vector taken
 ; input_data[y][x] = r1 + (r6 * r3 + r5) * FLOAT_SIZE
+; input_data[y][x] = r1 + (r6 * r25 + r5) * FLOAT_SIZE
 ; We then can index into the vector to see the 4 values (or fewer) pulled
 ;					START LOCATION + row offset + (x + y * (width of input data))
 ; output_data[row][col] = r2 + (col * r4) + ((r5 + offset) * FLOAT_SIZE + (r6 + offset) * FLOAR_SIZE * r3)
@@ -167,16 +173,16 @@ imTwoColStrideOneTwoD:
 %endmacro
 
 ;; write_output_location performs a write to an output location based on given register and locations
-;					START LOCATION + row offset + (x + y * (width of input data))
-; output_data[row][col] = r2 + (col * r4) + ((r5 + x_offset) + (r6 + y_offset) * r3) * FLOAT_SIZE
+;					START LOCATION + row offset + (x + y * (padded width of input data))
+; output_data[row][col] = r2 + (col * r4) + ((r5 + x_offset) + (r6 - y_offset) * r25) * FLOAT_SIZE
 ; TODO: CHANGE (col * r4) TO ALSO MULTIPLY BY FLOAT_SIZE
 %macro write_output_location(reg input_reg, reg column_index, imm x_offset, imm y_offset)
 	mul r12, r4, column_index	; this is the column offset
 	addi r13, r5, x_offset
-	addi r14, r6, y_offset
-	mul r14, r14, r3
+	subi r14, r6, y_offset
+	mul r14, r14, r25
 	add r15, r13, r14
-	shli r15, r15, 0x02	; this is the row offset
+	shli r15, r15, 0x02			; this is the row offset
 	add r16, r2, r12
 	add r11, r16, r15			; this is the output location
 	
