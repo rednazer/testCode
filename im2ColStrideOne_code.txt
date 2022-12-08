@@ -1,4 +1,9 @@
-;%define FLOAT_SIZE 0x04
+; Define initial reg vals
+
+; Call func
+bkpt 0x01
+jal imTwoColStrideOneTwoD
+bkpt 0x10
 
 ;; Pull in the needed values for the current convolution
 ;; input_data start location, output_data write location
@@ -9,14 +14,18 @@
 ; r3 = width of input data
 ; r4 = # of output cols
 imTwoColStrideOneTwoD:
-
+	; store r31 -> r23
+	and r23, r31, r31
+	
 	;; Set up loop y loop var
 	lih r6, 0x00000		; init y loop var = 0
 	lil r6, 0x00000
 
 	;; For loop y_filter starts
 	im_two_one_y_loop_start:
-
+		
+		bkpt 0x02
+		
 		lih r5, 0x00000		; init x loop var = 0
 		lil r5, 0x00000
 
@@ -27,7 +36,6 @@ imTwoColStrideOneTwoD:
 			shri r25, r25, 0x02
 			shli r25, r25, 0x02
 			mul r25, r25, r6
-			
 			
 			add r12, r25, r5
 			shli r13, r12, 0x02		; r13 = r12 * FLOAT_SIZE same as r13 = r12 << 2 (a float is 0x4)
@@ -98,7 +106,9 @@ imTwoColStrideOneTwoD:
 	bgzi im_two_one_y_loop_start	; branch to start of y loop
 
 	;; If y loop not branched to, then im2col is done, so return here
-	
+	; load r31 <- r23
+	and r31, r23, r23
+	jmpr r31, 0x0
 halt
 
 ; r1 = input_data start location
