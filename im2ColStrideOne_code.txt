@@ -55,8 +55,8 @@ imTwoColStrideOneTwoD:
 
 			im_two_one_one_up_start:
 				;; 1UP code starts
-				subi r20, r6, 0x01	; Check if y < 1 (to skip 1UP)
-				blzi skip_2up
+				cmpi r20, r6, 0x01	; Check if y < 1 (to skip 1UP)
+				blzi im_two_one_zero_up_start
 				addi r19, r3, 0x01	; Also check if y >= (width of input) - 1
 				cmp r6, r19
 				bgei im_two_one_zero_up_start
