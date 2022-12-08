@@ -246,6 +246,7 @@ im_two_one_write_output_elements:
 	write_return:
 		; load r31 <- r24
 		and r31, r24, r24
+		halt
 		jmpr r31, 0x0
 halt
 ;%endmacro
