@@ -9,6 +9,8 @@ bkpt 0x01
 jal imTwoColStrideOneTwoD
 bkpt 0x10
 
+halt
+
 ;; Pull in the needed values for the current convolution
 ;; input_data start location, output_data write location
 ;; width of input data (number of rows or len(input_data)), # of output cols
@@ -187,7 +189,7 @@ im_two_one_write_output_elements:
 		addi r11, r10, 0x01
 		; write_output_location(r27, r11, 0x00, y_offset)
 		and r8, r27, r27
-		jal im_two_one_write_output_location
+		jal im_two_one_write_output_location			;;;;;;;;;;;;;;;;;;; THIS HERE IS CULPRIT
 		addi r11, r10, 0x02
 		; write_output_location(r28, r11, 0x00, y_offset)
 		and r8, r28, r28
@@ -266,6 +268,8 @@ im_two_one_write_output_location:
 	shli r15, r15, 0x02			; this is the row offset
 	add r16, r2, r12
 	add r17, r16, r15			; this is the output location
+	
+	bkpt 0x09
 	
 	; Store to r17 with value of input reg
 	st32 [r17+0x00], r8
