@@ -29,9 +29,7 @@ imTwoColStrideOneTwoD:
 
 	;; For loop y_filter starts
 	im_two_one_y_loop_start:
-		
-		bkpt 0x02
-		
+
 		lih r5, 0x00000		; init x loop var = 0
 		lil r5, 0x00000
 
@@ -105,7 +103,9 @@ imTwoColStrideOneTwoD:
 		addi r5, r5, 0x04
 		cmp r25, r5				; (padded width) - (r5 + 4) > 0
 		bgzi im_two_one_x_loop_start	; Branch to start of x loop
-
+		
+		bkpt 0x02
+		
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
 	addi r6, r6, 0x01
 	cmp r3, r6
@@ -246,7 +246,6 @@ im_two_one_write_output_elements:
 	write_return:
 		; load r31 <- r24
 		and r31, r24, r24
-		halt
 		jmpr r31, 0x0
 halt
 ;%endmacro
@@ -272,9 +271,6 @@ im_two_one_write_output_location:
 	shli r15, r15, 0x02			; this is the row offset
 	add r16, r2, r12
 	add r17, r16, r15			; this is the output location
-	
-	bkpt 0x09
-	
 	; Store to r17 with value of input reg
 	st32 [r17+0x00], r8
 	
