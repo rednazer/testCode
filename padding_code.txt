@@ -35,6 +35,11 @@ padMatrix:
 	shri r9, r9, 0x02
 	shli r9, r9, 0x02
 	
+	; Used when getting inputs
+	addi r11, r3, 0x03	; (r3 + 3) >> 2 << 2
+	shri r11, r11, 0x02
+	shli r11, r11, 0x02
+	
 	;; For loop z layer starts
 	padding_z_loop_start:
 		
@@ -65,8 +70,8 @@ padMatrix:
 				
 				; Pull vector: start + ((x val) + (ceil x len) * (y val) + (ceil x len) * (y len) * (z val)) * 0x04
 				; Address: r1 + (r5 + r9 * r6 + r9 * r3 * r7) << 0x02
-				mul r12, r9, r6			; r12=r9*r6 (row offset)
-				mul r13, r9, r3
+				mul r12, r11, r6			; r12=r9*r6 (row offset)
+				mul r13, r11, r3
 				mul r13, r13, r7		; r13=r9*r3*r7 (depth offset)
 				add r14, r5, r12
 				add r14, r14, r13
