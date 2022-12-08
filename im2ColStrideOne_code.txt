@@ -281,9 +281,3 @@ im_two_one_write_output_location:
 	jmpr r31, 0x0
 halt
 ;%endmacro
-
-
-*** 0x200: 0x12100000 ***
-    inputs: rD=r1=0x0 imm=0
-    scalar_writeback: rD=r1=0x0
-    asm: lil r1, 0x0
