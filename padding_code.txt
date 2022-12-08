@@ -49,8 +49,7 @@ padMatrix:
 			vsti 0b1111, [r2+=0x00], v2
 			addi r2, r2, 0x10
 		addi r5, r5, 0x04
-		subi r20, r5, 0x08
-		cmp r20, r9		; (r5 - r9 - 8 < 0)
+		cmp r5, r9		; (r5 - r9 < 0)
 		blzi padding_zero_loop_one_start
 		
 		;; For loop y layer starts
@@ -157,8 +156,7 @@ padMatrix:
 			vsti 0b1111, [r2+=0x00], v2
 			addi r2, r2, 0x10
 		addi r5, r5, 0x04
-		subi r20, r5, 0x08
-		cmp r20, r9		; (r5 - r9 - 8 < 0)
+		cmp r5, r9		; (r5 - r9 < 0)
 		blzi padding_zero_loop_two_start
 		
 	; Z loop branch conditionals (r7 - r4 < 0)
