@@ -129,8 +129,8 @@ imTwoColStrideOneTwoD:
 		shli r14, r14, 0x02
 		add r14, r14, r2
 		vldi 0b1111, v2, [r14+=0x00]
-		lih r18, 0x0FFF
-		lil r18, 0xFFFF
+		lih r18, 0x0000
+		lil r18, 0x0000
 		
 		; Get difference between aligned and unaligned (0-3)
 		sub r15, r13, r12
