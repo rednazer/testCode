@@ -130,9 +130,9 @@ depthwise_convolution_stride1:
 		mul r15, r15, r9
 		shli r15, r15, 0x02			; r3 offset
 		
-		add r1, r4, r12
 		add r2, r3, r14
 		add r3, r1, r15
+		add r1, r4, r12
 		addi r4, r16, 0x00
 		lih r5, 0x00
 		lil r5, 0x01		; r5 = 1 because depthwise
