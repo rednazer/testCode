@@ -41,7 +41,7 @@ imTwoColStrideOneTwoD:
 		im_two_one_x_loop_start:
 			;; Get input vector
 			
-			;bkpt 0x02
+			bkpt 0x02
 			
 			mul r12, r25, r6
 			add r12, r12, r5		; r12 = r5 + r6 * r25 (x + y*width)
@@ -107,6 +107,8 @@ imTwoColStrideOneTwoD:
 		cmp r25, r5				; (padded width) - (r5 + 4) > 0
 		bgzi im_two_one_x_loop_start	; Branch to start of x loop
 		
+		bkpt 0x06
+		
 		;; alignment_padding
 		; Gets the end of the line
 		mul r12, r4, r4		; vals written to this - 1
@@ -140,7 +142,6 @@ imTwoColStrideOneTwoD:
 		
 		im_two_one_end_align:
 		vsti 0b1111, [r14+=0x00], v2
-		bkpt 0x06
 		
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
 	addi r6, r6, 0x01
