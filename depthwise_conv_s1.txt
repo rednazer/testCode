@@ -1,3 +1,18 @@
+; Setup regs
+lil r1, 0x0000
+lil r2, 0x1000
+lil r3, 0x2000
+lil r4, 0x3000
+lil r5, 112
+lil r6, 64
+lil r30, 0x7000
+
+; call function
+bkpt 0x01
+jal depthwise_convolution_stride1
+bkpt 0x0a
+halt
+
 ;; Information we need
 ; r1 = Input_matrix (also output of current)		- location 1
 ; r2 = Output location for padded matrix			- location 2
@@ -7,6 +22,20 @@
 ; r6 = depth of matrix (z) (number of filters)
 ;
 depthwise_convolution_stride1:
+	; Stack stuff
+	subi r30, r30, 0x58
+	st36 [r30+0x00], r1
+	st36 [r30+0x08], r2
+	st36 [r30+0x10], r3
+	st36 [r30+0x18], r4
+	st36 [r30+0x20], r5
+	st36 [r30+0x28], r6 
+	st36 [r30+0x30], r7
+	st36 [r30+0x38], r8
+	st36 [r30+0x40], r9
+	st36 [r30+0x48], r10
+	st36 [r30+0x50], r31
+	
 	;; Pad matrix
 	; r1 = Location 1 (input)
 	; r2 = Location 2 (ouptut)
@@ -20,7 +49,7 @@ depthwise_convolution_stride1:
 	
 	; pad the matrix
 	; push_stack_caller(padMatrix)
-	bkpt 0x01
+	bkpt 0x02
 	
 	;; For loop iterating through each z layer
 	lih r9, 0x0000
@@ -56,7 +85,7 @@ depthwise_convolution_stride1:
 		addi r4, r5, 0x00
 		
 		; CALL IM2COL
-		bkpt 0x02
+		bkpt 0x03
 		
 		;; MatMul
 		; r1 = Location 4 + 12 * (curr depth) * FLOAT_SIZE (Input)
@@ -95,7 +124,7 @@ depthwise_convolution_stride1:
 		addi r6, r13, 0x00
 		
 		; CALL MATMUL
-		bkpt 0x03
+		bkpt 0x04
 		
 	;; Check loop condition
 	; branch if r9 < r6 (r9-r6<0)
@@ -104,5 +133,18 @@ depthwise_convolution_stride1:
 	blzi layer_loop
 	
 	; Return to caller function
+	ld36 r1, [r30+0x00]
+	ld36 r2, [r30+0x08]
+	ld36 r3, [r30+0x10]
+	ld36 r4, [r30+0x18]
+	ld36 r5, [r30+0x20]
+	ld36 r6, [r30+0x28]
+	ld36 r7, [r30+0x30]
+	ld36 r8, [r30+0x38]
+	ld36 r9, [r30+0x40]
+	ld36 r10, [r30+0x48]
+	ld36 r31, [r30+0x50]
+	ld36 r31, [r30+0x50]
+	addi r30, r30, +0x58
 	jmpr r31, 0x00
-
+	halt

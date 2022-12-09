@@ -2,8 +2,8 @@
 ;; As well as X registers
 ;; Let's assume X = 10
 ;; (10 reg + 1 addr) * 8 bytes per = 0x58
-; sp = r30
-; lr = r31
+; stack pointer = r30
+; link register = r31
 
 ;; This will call another method and push current PC and register values onto the stack
 ; Use this when calling another function
@@ -13,18 +13,18 @@
 
 ; Use at the start of a called function
 %macro push_stack_callee()
-	subi sp, sp, 0x58
-	st36 [sp+0x00], r1
-	st36 [sp+0x08], r2
-	st36 [sp+0x10], r3
-	st36 [sp+0x18], r4
-	st36 [sp+0x20], r5
-	st36 [sp+0x28], r6 
-	st36 [sp+0x30], r7
-	st36 [sp+0x38], r8
-	st36 [sp+0x40], r9
-	st36 [sp+0x48], r10
-	st36 [sp+0x50], lr
+	subi r30, r30, 0x58
+	st36 [r30+0x00], r1
+	st36 [r30+0x08], r2
+	st36 [r30+0x10], r3
+	st36 [r30+0x18], r4
+	st36 [r30+0x20], r5
+	st36 [r30+0x28], r6 
+	st36 [r30+0x30], r7
+	st36 [r30+0x38], r8
+	st36 [r30+0x40], r9
+	st36 [r30+0x48], r10
+	st36 [r30+0x50], r31
 %endmacro
 
 
@@ -32,35 +32,36 @@
 ;; This may require a Reg to store a return value into (or not)
 ; Use this to return from a function call
 %macro pop_stack()
-	ld36 r1, [sp+0x00]
-	ld36 r2, [sp+0x08]
-	ld36 r3, [sp+0x10]
-	ld36 r4, [sp+0x18]
-	ld36 r5, [sp+0x20]
-	ld36 r6, [sp+0x28]
-	ld36 r7, [sp+0x30]
-	ld36 r8, [sp+0x38]
-	ld36 r9, [sp+0x40]
-	ld36 r10, [sp+0x48]
-	lr36 lr, [sp+0x50]
-	addi sp, sp, +0x58
-	jmpr lr
+	ld36 r1, [r30+0x00]
+	ld36 r2, [r30+0x08]
+	ld36 r3, [r30+0x10]
+	ld36 r4, [r30+0x18]
+	ld36 r5, [r30+0x20]
+	ld36 r6, [r30+0x28]
+	ld36 r7, [r30+0x30]
+	ld36 r8, [r30+0x38]
+	ld36 r9, [r30+0x40]
+	ld36 r10, [r30+0x48]
+	ld36 r31, [r30+0x50]
+	ld36 r31, [r30+0x50]
+	addi r30, r30, +0x58
+	jmpr r31
 %endmacro
 
 
 ;; This will pull in the register values from the caller method and put them into the regs.
 ;; This shouldn't require any vars
 %macro peek_stack()
-	ld36 r1, [sp+0x00]
-	ld36 r2, [sp+0x08]
-	ld36 r3, [sp+0x10]
-	ld36 r4, [sp+0x18]
-	ld36 r5, [sp+0x20]
-	ld36 r6, [sp+0x28]
-	ld36 r7, [sp+0x30]
-	ld36 r8, [sp+0x38]
-	ld36 r9, [sp+0x40]
-	ld36 r10, [sp+0x48]
+	ld36 r1, [r30+0x00]
+	ld36 r2, [r30+0x08]
+	ld36 r3, [r30+0x10]
+	ld36 r4, [r30+0x18]
+	ld36 r5, [r30+0x20]
+	ld36 r6, [r30+0x28]
+	ld36 r7, [r30+0x30]
+	ld36 r8, [r30+0x38]
+	ld36 r9, [r30+0x40]
+	ld36 r10, [r30+0x48]
 %endmacro
 
 
