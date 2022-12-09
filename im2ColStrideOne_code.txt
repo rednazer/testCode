@@ -263,7 +263,7 @@ halt
 ; r7 = y_offset - no assignment needed
 im_two_one_write_output_location:
 	mul r12, r4, r4
-	addi r12, r12, 0x07	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
+	addi r12, r12, 0x03	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
 	shri r12, r12, 0x02
 	shli r12, r12, 0x04	; number of vectors, no floats so x16 instead of x4
 	mul r12, r12, r11	; this is the column offset
