@@ -61,7 +61,15 @@ depthwise_convolution_stride1:
 		; r2 = Location 3 + ( ((width+2)^2+3)>>2<<4 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (output)
 		; r3 = width (x and y) - pad matrix (width + 2)
 		; r4 = num im2col columns (per row)- this is calculated from width (width - 2 + 2)
-		peek_stack()
+		
+		;peek_stack()
+		ld36 r1, [r30+0x00]
+		ld36 r2, [r30+0x08]
+		ld36 r3, [r30+0x10]
+		ld36 r4, [r30+0x18]
+		ld36 r5, [r30+0x20]
+		ld36 r6, [r30+0x28]
+		
 		addi r12, r5, 0x05
 		shri r12, r12, 0x02
 		shli r12, r12, 0x02
@@ -94,7 +102,15 @@ depthwise_convolution_stride1:
 		; r4 = width of matrix - common length (3x3 for filter size)
 		; r5 = # cols for r1 (A matrix) - number of filters
 		; r6 = # rows in r2 (B matrix) - number of im2col columns
-		peek_stack()
+		
+		;peek_stack()
+		ld36 r1, [r30+0x00]
+		ld36 r2, [r30+0x08]
+		ld36 r3, [r30+0x10]
+		ld36 r4, [r30+0x18]
+		ld36 r5, [r30+0x20]
+		ld36 r6, [r30+0x28]
+		
 		lih r12, 0x00
 		lil r12, 0x0c
 		mul r12, r12, r9
