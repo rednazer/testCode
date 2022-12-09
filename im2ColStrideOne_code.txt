@@ -56,6 +56,7 @@ imTwoColStrideOneTwoD:
 			vidx r29, v1, 0x3
 			
 			;; 2UP code start
+			bkpt 0x03
 				cmpi r6, 0x02	; Check if y < 2 (to skip 2UP)
 				blzi im_two_one_one_up_start
 				
@@ -70,6 +71,7 @@ imTwoColStrideOneTwoD:
 
 			im_two_one_one_up_start:
 				;; 1UP code starts
+			bkpt 0x04
 				cmpi r6, 0x01	; Check if y < 1 (to skip 1UP)
 				blzi im_two_one_zero_up_start
 				addi r19, r3, 0x01	; Also check if y >= (width of input) - 1
@@ -87,6 +89,7 @@ imTwoColStrideOneTwoD:
 
 			im_two_one_zero_up_start:
 				;; 0UP code starts
+			bkpt 0x05
 				addi r19, r3, 0x02	; Check if y >= (width of input) - 2
 				cmp r6, r19
 				bgei im_two_one_check_branch_conditionals
@@ -107,7 +110,7 @@ imTwoColStrideOneTwoD:
 		cmp r25, r5				; (padded width) - (r5 + 4) > 0
 		bgzi im_two_one_x_loop_start	; Branch to start of x loop
 		
-		bkpt 0x03
+		bkpt 0x06
 		
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
 	addi r6, r6, 0x01
