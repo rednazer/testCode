@@ -144,7 +144,7 @@ depthwise_convolution_stride1:
 	;; Check loop condition
 	; branch if r9 < r6 (r9-r6<0)
 	addi r9, r9, 0x01
-	sub r20, r9, r6
+	cmp r9, r6
 	blzi layer_loop
 	
 	; Return to caller function
