@@ -109,7 +109,15 @@ imTwoColStrideOneTwoD:
 		
 		bkpt 0x06
 		
-		;; alignment_padding
+	; Branch to y_loop_start (check if r6 + 1 == width of input data)
+	addi r6, r6, 0x01
+	cmp r3, r6
+	bgzi im_two_one_y_loop_start	; branch to start of y loop
+	
+	;; Pad the neds of rows before returning
+	lih r5, 0x00000		; init x loop var = 0
+	lil r5, 0x00000
+	im_two_one_align_padding:
 		; Gets the end of the line
 		mul r12, r4, r4		; vals written to this - 1
 		addi r13, r12, 0x03	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
@@ -144,12 +152,11 @@ imTwoColStrideOneTwoD:
 		
 		im_two_one_end_align:
 		vsti 0b1111, [r14+=0x00], v2
-		
-	; Branch to y_loop_start (check if r6 + 1 == width of input data)
-	addi r6, r6, 0x01
-	cmp r3, r6
-	bgzi im_two_one_y_loop_start	; branch to start of y loop
-
+	; Branch to align_padding
+	addi r5, r5, 0x01
+	cmpi r5, 0x09
+	blzi im_two_one_align_padding
+	
 	;; If y loop not branched to, then im2col is done, so return here
 	; load r31 <- r23
 	and r31, r23, r23
