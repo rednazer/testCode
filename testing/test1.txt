@@ -1,0 +1,4 @@
+lih r1, 0x00
+lil r1, 0x01
+jal test_label
+halt

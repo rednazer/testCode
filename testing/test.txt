@@ -1,0 +1,9 @@
+lih r1, 0x00
+lil r1, 0x01
+jal test_label
+halt
+test_label:
+        addi r2, r1, 0x01
+        bkpt 0x01
+        jmpr r31, 0x00
+halt
