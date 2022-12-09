@@ -41,7 +41,7 @@ imTwoColStrideOneTwoD:
 		im_two_one_x_loop_start:
 			;; Get input vector
 			
-			bkpt 0x02
+			;bkpt 0x02
 			
 			mul r12, r25, r6
 			add r12, r12, r5		; r12 = r5 + r6 * r25 (x + y*width)
