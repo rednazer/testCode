@@ -1,6 +1,6 @@
 ; Define initial reg vals
 lil r1, 0x0000
-lil r2, 0x0250
+lil r2, 0x1000
 lil r3, 0x0009
 lil r4, 7			; (r3-2)
 
