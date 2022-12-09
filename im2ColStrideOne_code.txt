@@ -148,7 +148,7 @@ im_two_one_write_output_elements:
 	; Skip if r5 == 0
 		lih r9, 0x0000
 		lil r9, 0x0000
-		subi r9, r9, 0x02	; Load -0x02 into r9
+		subi r9, r9, 0x02	; Load -0x02 into r9 (how left or right from start)
 		cmpi r5, 0x00
 		bezi one_left
 		addi r11, r10, 0x02
@@ -277,6 +277,8 @@ im_two_one_write_output_location:
 	add r17, r16, r15			; this is the output location
 	; Store to r17 with value of input reg
 	st32 [r17+0x00], r8
+	
+	bkpt 0x02
 	
 	jmpr r31, 0x0
 halt
