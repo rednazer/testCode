@@ -116,8 +116,8 @@ imTwoColStrideOneTwoD:
 		; Pull last vector
 		subi r14, r13, 0x04
 		vldr 0b1111, v2, [r14+=r2]
-		lih r18, 0x00
-		lil r18, 0x00
+		lih r18, 0x0FFF
+		lil r18, 0xFFFF
 		
 		; Get difference between aligned and unaligned (0-3)
 		sub r15, r13, r12
