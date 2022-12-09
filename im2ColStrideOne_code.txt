@@ -269,7 +269,8 @@ im_two_one_write_output_location:
 	mul r12, r12, r11	; this is the column offset
 	add r13, r5, r9		; total_x = x_val + x_offset
 	sub r14, r6, r7		; total_y = y_val - y_offset
-	mul r14, r14, r25
+	;mul r14, r14, r25
+	mul r14, r14, r4
 	add r15, r13, r14
 	shli r15, r15, 0x02			; this is the row offset
 	add r16, r2, r12
