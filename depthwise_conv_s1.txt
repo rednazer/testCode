@@ -58,7 +58,7 @@ depthwise_convolution_stride1:
 	layer_loop:
 		;; im2col (stride 2 2d)
 		; r1 = Location 2 + ( ((width+2+3)>>2<<2) * (width+2) * (curr depth) * FLOAT_SIZE)
-		; r2 = Location 3 + ( ((width+2)^2+3)>>2<<4 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (output)
+		; r2 = Location 3 + ( (width^2+3)>>2<<4 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (output)
 		; r3 = width (x and y) - pad matrix (width + 2)
 		; r4 = num im2col columns (per row)- this is calculated from width (width - 2 + 2)
 		
@@ -78,17 +78,17 @@ depthwise_convolution_stride1:
 		mul r12, r12, r9
 		shli r12, r12, 0x02			; r1 offset
 		
-		mul r13, r13, r13
-		addi r13, r13, 0x03
-		shri r13, r13, 0x02
-		shli r13, r13, 0x04
+		mul r15, r5, r5
+		addi r15, r15, 0x03
+		shri r15, r15, 0x02
+		shli r15, r15, 0x04
 		lih r14, 0x00
 		lil r14, 0x09
-		mul r13, r13, r14
-		mul r13, r13, r9			; r2 offset
+		mul r15, r15, r14
+		mul r15, r15, r9			; r2 offset
 		
 		add r1, r2, r12
-		add r2, r3, r13
+		add r2, r3, r15
 		addi r3, r5, 0x02
 		addi r4, r5, 0x00
 		
