@@ -161,6 +161,6 @@ depthwise_convolution_stride1:
 	ld36 r10, [r30+0x48]
 	ld36 r31, [r30+0x50]
 	ld36 r31, [r30+0x50]
-	addi r30, r30, +0x58
+	addi r30, r30, 0x58
 	jmpr r31, 0x00
 	halt
