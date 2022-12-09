@@ -255,7 +255,7 @@ halt
 
 ;; write_output_location performs a write to an output location based on given register and locations
 ;					START LOCATION + row offset + (x + y * (padded width of input data))
-; output_data[row][col] = r2 + (col * ceil(r4*r4)) + ((r5 + x_offset) + (r6 - y_offset) * r25) * FLOAT_SIZE
+; output_data[row][col] = r2 + (col * ceil(r4*r4)) + ((r5 + x_offset) + (r6 - y_offset) * r4) * FLOAT_SIZE
 ;%macro write_output_location(reg input_reg, reg column_index, imm x_offset, imm y_offset)
 ; r8 = input_reg
 ; r11 = column_index - already assigned
