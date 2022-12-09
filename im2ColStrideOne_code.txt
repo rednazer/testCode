@@ -126,17 +126,17 @@ imTwoColStrideOneTwoD:
 		bezi im_two_one_end_align
 		
 		; If 1, fill last
-		vsplat 0x1000, v2, r18
+		vsplat 0b1000, v2, r18
 		cmpi r15, 0x01
 		bezi im_two_one_end_align	
 		
 		; If 2, fill last two
-		vsplat 0x1100, v2, r18
+		vsplat 0b1100, v2, r18
 		cmpi r15, 0x02
 		bezi im_two_one_end_align
 		
 		; If 3, fill last three
-		vsplat 0x1110, v2, r18
+		vsplat 0b1110, v2, r18
 		
 		im_two_one_end_align:
 		vsti 0b1111, [r14+=0x00], v2
