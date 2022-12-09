@@ -124,7 +124,8 @@ imTwoColStrideOneTwoD:
 		shri r13, r13, 0x02
 		shli r13, r13, 0x02
 		; Pull last vector
-		subi r14, r13, 0x04
+		mul r14, r13, r5
+		subi r14, r14, 0x04
 		shli r14, r14, 0x02
 		add r14, r14, r2
 		vldi 0b1111, v2, [r14+=0x00]
