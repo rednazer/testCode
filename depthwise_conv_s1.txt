@@ -19,7 +19,8 @@ depthwise_convolution_stride1:
 	and r4, r6, r6
 	
 	; pad the matrix
-	push_stack_caller(padMatrix)
+	; push_stack_caller(padMatrix)
+	bkpt 0x01
 	
 	;; For loop iterating through each z layer
 	lih r9, 0x0000
@@ -55,7 +56,7 @@ depthwise_convolution_stride1:
 		addi r4, r5, 0x00
 		
 		; CALL IM2COL
-		
+		bkpt 0x02
 		
 		;; MatMul
 		; r1 = Location 4 + 12 * (curr depth) * FLOAT_SIZE (Input)
@@ -94,6 +95,7 @@ depthwise_convolution_stride1:
 		addi r6, r13, 0x00
 		
 		; CALL MATMUL
+		bkpt 0x03
 		
 	;; Check loop condition
 	; branch if r9 < r6 (r9-r6<0)
