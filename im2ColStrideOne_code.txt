@@ -107,6 +107,39 @@ imTwoColStrideOneTwoD:
 		cmp r25, r5				; (padded width) - (r5 + 4) > 0
 		bgzi im_two_one_x_loop_start	; Branch to start of x loop
 		
+		;; alignment_padding
+		; Gets the end of the line
+		mul r12, r4, r4		; vals written to this - 1
+		addi r13, r12, 0x03	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
+		shri r13, r13, 0x02
+		shli r13, r13, 0x02
+		; Pull last vector
+		subi r14, r13, 0x04
+		vldr 0b1111, v2, [r14+=r2]
+		lih r18, 0x00
+		lil r18, 0x00
+		
+		; Get difference between aligned and unaligned (0-3)
+		sub r15, r13, r12
+		; If 0, skip
+		cmpi r15, 0x00
+		bezi im_two_one_end_align
+		
+		; If 1, fill last
+		vsplat 0x1000, v2, r18
+		cmpi r15, 0x01
+		bezi im_two_one_end_align	
+		
+		; If 2, fill last two
+		vsplat 0x1100, v2, r18
+		cmpi r15, 0x02
+		bezi im_two_one_end_align
+		
+		; If 3, fill last three
+		vsplat 0x1110, v2, r18
+		
+		im_two_one_end_align:
+		vsti 0b1111, [r14+=0x00], v2
 		bkpt 0x06
 		
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
