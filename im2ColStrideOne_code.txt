@@ -1,8 +1,8 @@
 ; Define initial reg vals
 lil r1, 0x0000
 lil r2, 0x1000
-lil r3, 0x0009
-lil r4, 7			; (r3-2)
+lil r3, 0x00016
+lil r4, 14			; (r3-2)
 
 ; Call func
 bkpt 0x01
@@ -165,9 +165,6 @@ imTwoColStrideOneTwoD:
 		; Check if 4 or 8 aligned
 		cmp r16, r13		; if r16 = r13 then write 0 vector to end
 		bezi eight_aligned
-;		mul r14, r13, r5
-;		shli r14, r14, 0x02
-;		add r14, r14, r2
 		addi r14, r14, 0x010
 		vsti 0b1111, [r14+=0x00], v3
 		
