@@ -125,8 +125,8 @@ imTwoColStrideOneTwoD:
 		shri r13, r13, 0x02
 		shli r13, r13, 0x02
 		addi r16, r12, 0x07	; (8 aligned width) r12 = (r4*r4 + 7) >> 2 << 2
-		shri r16, r16, 0x02
-		shli r16, r16, 0x02
+		shri r16, r16, 0x03
+		shli r16, r16, 0x03
 		; Pull last vector
 		subi r15, r5, 0x01
 		mul r14, r16, r15
