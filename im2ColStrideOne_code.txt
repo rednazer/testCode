@@ -1,7 +1,7 @@
 ; Define initial reg vals
 lil r1, 0x0000
 lil r2, 0x1000
-lil r3, 0x00016
+lil r3, 16
 lil r4, 14			; (r3-2)
 
 ; Call func
@@ -40,8 +40,6 @@ imTwoColStrideOneTwoD:
 		;; For loop x_filter starts
 		im_two_one_x_loop_start:
 			;; Get input vector
-			
-			;bkpt 0x02
 			
 			mul r12, r25, r6
 			add r12, r12, r5		; r12 = r5 + r6 * r25 (x + y*width)
@@ -114,7 +112,6 @@ imTwoColStrideOneTwoD:
 	cmp r3, r6
 	bgzi im_two_one_y_loop_start	; branch to start of y loop
 	
-	bkpt 0x07
 	
 	;; Pad the ends of rows before returning
 	lih r5, 0x00000		; init x loop var = 0
@@ -169,7 +166,6 @@ imTwoColStrideOneTwoD:
 		vsti 0b1111, [r14+=0x00], v3
 		
 		eight_aligned:
-		bkpt 0x08
 		
 	; Branch to align_padding
 	addi r5, r5, 0x01
