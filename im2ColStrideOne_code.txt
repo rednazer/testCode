@@ -3,6 +3,7 @@ lil r1, 0x0000
 lil r2, 0x1000
 lil r3, 9
 lil r4, 7			; (r3-2)
+lil r30, 0xF000
 
 ; Call func
 bkpt 0x01
@@ -20,8 +21,22 @@ halt
 ; r3 = width of input data
 ; r4 = # of output cols
 imTwoColStrideOneTwoD:
+	; Push to stack
+	subi r30, r30, 0x58
+	st36 [r30+0x00], r1
+	st36 [r30+0x08], r2
+	st36 [r30+0x10], r3
+	st36 [r30+0x18], r4
+	st36 [r30+0x20], r5
+	st36 [r30+0x28], r6 
+	st36 [r30+0x30], r7
+	st36 [r30+0x38], r8
+	st36 [r30+0x40], r9
+	st36 [r30+0x48], r10
+	st36 [r30+0x50], r31
+	
 	; store r31 -> r23
-	and r23, r31, r31
+	; and r23, r31, r31
 	
 	;; Set up loop y loop var
 	lih r6, 0x00000		; init y loop var = 0
@@ -172,9 +187,25 @@ imTwoColStrideOneTwoD:
 	blei im_two_one_align_padding
 	
 	;; If y loop not branched to, then im2col is done, so return here
+	; Pop Stack
+	ld36 r1, [r30+0x00]
+	ld36 r2, [r30+0x08]
+	ld36 r3, [r30+0x10]
+	ld36 r4, [r30+0x18]
+	ld36 r5, [r30+0x20]
+	ld36 r6, [r30+0x28]
+	ld36 r7, [r30+0x30]
+	ld36 r8, [r30+0x38]
+	ld36 r9, [r30+0x40]
+	ld36 r10, [r30+0x48]
+	ld36 r31, [r30+0x50]
+	ld36 r31, [r30+0x50]
+	addi r30, r30, 0x58
+	jmpr r31, 0x00
+	
 	; load r31 <- r23
-	and r31, r23, r23
-	jmpr r31, 0x0
+	; and r31, r23, r23
+	; jmpr r31, 0x0
 halt
 
 ; r1 = input_data start location
@@ -321,8 +352,8 @@ halt
 im_two_one_write_output_location:
 	mul r12, r4, r4
 	addi r12, r12, 0x07	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
-	shri r12, r12, 0x02
-	shli r12, r12, 0x04	; number of vectors, no floats so x16 instead of x4
+	shri r12, r12, 0x03
+	shli r12, r12, 0x05	; number of vectors, no floats so x16 instead of x4
 	mul r12, r12, r11	; this is the column offset
 	add r13, r5, r9		; total_x = x_val + x_offset
 	sub r14, r6, r7		; total_y = y_val - y_offset
@@ -338,3 +369,4 @@ im_two_one_write_output_location:
 	jmpr r31, 0x0
 halt
 ;%endmacro
+
