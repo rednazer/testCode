@@ -79,9 +79,9 @@ depthwise_convolution_stride1:
 		shli r12, r12, 0x02			; r1 offset
 		
 		mul r15, r5, r5
-		addi r15, r15, 0x03
-		shri r15, r15, 0x02
-		shli r15, r15, 0x04
+		addi r15, r15, 0x07
+		shri r15, r15, 0x03
+		shli r15, r15, 0x05
 		lih r14, 0x00
 		lil r14, 0x09
 		mul r15, r15, r14
