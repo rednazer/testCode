@@ -1,8 +1,8 @@
 ; Define initial reg vals
 lil r1, 0x0000
 lil r2, 0x1000
-lil r3, 16
-lil r4, 14			; (r3-2)
+lil r3, 9
+lil r4, 7			; (r3-2)
 
 ; Call func
 bkpt 0x01
