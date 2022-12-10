@@ -114,20 +114,27 @@ imTwoColStrideOneTwoD:
 	cmp r3, r6
 	bgzi im_two_one_y_loop_start	; branch to start of y loop
 	
+	bkpt 0x07
+	
 	;; Pad the ends of rows before returning
-	lih r5, 0x0000		; init x loop var = 0
-	lil r5, 0x0000
-	lih r18, 0x0FFF
-	lil r18, 0xFFFF
+	lih r5, 0x00000		; init x loop var = 0
+	lil r5, 0x00001
+	lih r18, 0x0000
+	lil r18, 0x0000
 	vsplat 0b1111, v3, r18
 	im_two_one_align_padding:
 		; Gets the end of the line
 		mul r12, r4, r4		; vals written to this - 1
-		addi r13, r12, 0x03	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
+		addi r13, r12, 0x03	; (4 aligned width) r12 = (r4*r4 + 3) >> 2 << 2
 		shri r13, r13, 0x02
 		shli r13, r13, 0x02
+		addi r16, r12, 0x07	; (8 aligned width) r12 = (r4*r4 + 7) >> 2 << 2
+		shri r16, r16, 0x02
+		shli r16, r16, 0x02
 		; Pull last vector
-		mul r14, r13, r5
+		subi r15, r5, 0x01
+		mul r14, r16, r15
+		addi r14, r14, r13
 		subi r14, r14, 0x04
 		shli r14, r14, 0x02
 		add r14, r14, r2
@@ -156,19 +163,21 @@ imTwoColStrideOneTwoD:
 		vsti 0b1111, [r14+=0x00], v2
 		
 		; Check if 4 or 8 aligned
-		andi r15, r13, 0x08		; if r13 % 8 = 4 write 0 vector to end
+		cmp r16, r13		; if r16 = r13 then write 0 vector to end
 		bezi eight_aligned
-		mul r14, r13, r5
-		shli r14, r14, 0x02
-		add r14, r14, r2
+;		mul r14, r13, r5
+;		shli r14, r14, 0x02
+;		add r14, r14, r2
+		addi r14, r14, 0x010
 		vsti 0b1111, [r14+=0x00], v3
 		
 		eight_aligned:
+		bkpt 0x08
 		
 	; Branch to align_padding
 	addi r5, r5, 0x01
 	cmpi r5, 0x09
-	blzi im_two_one_align_padding
+	blei im_two_one_align_padding
 	
 	;; If y loop not branched to, then im2col is done, so return here
 	; load r31 <- r23
