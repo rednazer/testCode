@@ -1,18 +1,18 @@
 ; Setup mem
 
 ; Setup Regs
-lil r1, 0x0000
-lil r2, 0x0200
-lil r3, 0x0004
-lil r4, 0x0001
+;lil r1, 0x0000
+;lil r2, 0x0200
+;lil r3, 0x0004
+;lil r4, 0x0001
 
 ; Call padmatrix
-bkpt 0x01
-jal padMatrix
-bkpt 0x06
+;bkpt 0x01
+;jal padMatrix
+;bkpt 0x06
 
-halt
-halt
+;halt
+;halt
 
 ;; Used for all convolutions that aren't pointwise convolutions
 ;; pads 1 layer of 0's around the x and y of the matrices

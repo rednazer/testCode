@@ -98,7 +98,7 @@ depthwise_convolution_stride2:
 		bkpt 0x03
 		
 		;; MatMul
-		; r1 = Location 4 + 12 * (curr depth) * FLOAT_SIZE (Input)
+		; r1 = Location 4 + 16 * (curr depth) * FLOAT_SIZE (Input)
 		; r2 = Location 3 + ( ( ((width+1)/2)^2+7)>>3<<5 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (input)
 		; r3 = Location 1 + (((width/2)+3)>>2<<2) * (width/2) * (curr depth) * FLOAT_SIZE (Output)
 		; r4 = width of matrix - common length (3x3 for filter size)
