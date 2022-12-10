@@ -6,7 +6,7 @@ lil r4, 4			; (r3>>1) ->9/2=4
 
 ; Call func
 bkpt 0x01
-jal imTwoColStrideOneTwoD
+jal imTwoColStrideTwoTwoD
 bkpt 0x10
 
 halt
@@ -19,7 +19,7 @@ halt
 ; r2 = output_data write location
 ; r3 = width of input data
 ; r4 = # of output cols
-imTwoColStrideOneTwoD:
+imTwoColStrideTwoTwoD:
 	; store r31 -> r23
 	and r23, r31, r31
 	
@@ -32,16 +32,16 @@ imTwoColStrideOneTwoD:
 	shli r25, r25, 0x02
 	
 	;; For loop y_filter starts
-	im_two_one_y_loop_start:
+	im_two_two_y_loop_start:
 
 		lih r5, 0x00000		; init x loop var = 0
 		lil r5, 0x00000
 
 		;; For loop x_filter starts
-		im_two_one_x_loop_start:
+		im_two_two_x_loop_start:
 			;; Get input vector
 			
-			;bkpt 0x02
+			bkpt 0x02
 			
 			mul r12, r25, r6
 			add r12, r12, r5		; r12 = r5 + r6 * r25 (x + y*width)
@@ -58,9 +58,9 @@ imTwoColStrideOneTwoD:
 			;; 2UP code start
 				andi r20, r6, 0x01		; check if y % 2 = 0
 				cmpi r20, 0x00
-				bnzi im_two_one_one_up_start
+				bnzi im_two_two_one_up_start
 				cmpi r6, 0x02			; Check if y < 2 (to skip 2UP)
-				blzi im_two_one_one_up_start
+				blzi im_two_two_one_up_start
 				
 				; write_output_elements(0x06, 0x02) ; Use to write vals to output
 				; r10 = col_offset
@@ -69,18 +69,18 @@ imTwoColStrideOneTwoD:
 				; r7 = y_offset
 				lih r7, 0x0000
 				lil r7, 0x01
-				jal im_two_one_write_output_elements
+				jal im_two_two_write_output_elements
 
-			im_two_one_one_up_start:
+			im_two_two_one_up_start:
 				;; 1UP code starts
 				andi r20, r6, 0x01		; check if y % 2 = 1
 				cmpi r20, 0x00
-				bezi im_two_one_one_up_start
+				bezi im_two_two_one_up_start
 				cmpi r6, 0x01			; Check if y < 1 (to skip 1UP)
-				blzi im_two_one_zero_up_start
+				blzi im_two_two_zero_up_start
 				subi r19, r3, 0x01		; Also check if y >= (width of input) - 1
 				cmp r6, r19
-				bgei im_two_one_zero_up_start
+				bgei im_two_two_zero_up_start
 				
 				; write_output_elements(0x03, 0x01)	; Use to write vals to output
 				; r10 = col_offset
@@ -89,16 +89,16 @@ imTwoColStrideOneTwoD:
 				; r7 = y_offset
 				lih r7, 0x0000
 				lil r7, 0x00
-				jal im_two_one_write_output_elements
+				jal im_two_two_write_output_elements
 
-			im_two_one_zero_up_start:
+			im_two_two_zero_up_start:
 				;; 0UP code starts
 				andi r20, r6, 0x01		; check if y % 2 = 0
 				cmpi r20, 0x00
-				bnzi im_two_one_one_up_start
+				bnzi im_two_two_one_up_start
 				subi r19, r3, 0x02	; Check if y >= (width of input) - 2
 				cmp r6, r19
-				bgei im_two_one_check_branch_conditionals
+				bgei im_two_two_check_branch_conditionals
 				
 				; write_output_elements(0x00, 0x00)	; Use to write vals to output
 				; r10 = col_offset
@@ -107,21 +107,21 @@ imTwoColStrideOneTwoD:
 				; r7 = y_offset
 				lih r7, 0x0000
 				lil r7, 0x00
-				jal im_two_one_write_output_elements
+				jal im_two_two_write_output_elements
 
-		im_two_one_check_branch_conditionals:
+		im_two_two_check_branch_conditionals:
 		;; Check loop conditionals
 		; Branch to x_loop_start (check if r5 + 4 < width of input data)
 		addi r5, r5, 0x04
 		cmp r25, r5				; (padded width) - (r5 + 4) > 0
-		bgzi im_two_one_x_loop_start	; Branch to start of x loop
+		bgzi im_two_two_x_loop_start	; Branch to start of x loop
 		
 		bkpt 0x06
 		
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
 	addi r6, r6, 0x01
 	cmp r3, r6
-	bgzi im_two_one_y_loop_start	; branch to start of y loop
+	bgzi im_two_two_y_loop_start	; branch to start of y loop
 
 
 	;; If y loop not branched to, then im2col is done, so return here
@@ -150,7 +150,7 @@ halt
 ;					START LOCATION + row offset + (x + y * (width of input data))
 ; output_data[row][col] = r2 + (col * r4) + ((r5 + offset) * FLOAT_SIZE + (r6 + offset) * FLOAR_SIZE * r3)
 ;%macro write_output_elements(imm col_offset (r10), imm y_offset (r7))
-im_two_one_write_output_elements:
+im_two_two_write_output_elements:
 	; store r31 -> r24
 	and r24, r31, r31
 	
@@ -168,7 +168,7 @@ im_two_one_write_output_elements:
 		; r7 = y_offset - no assignment needed
 		; r8 = input_reg - do before calling
 		and r8, r26, r26
-		jal im_two_one_write_output_location
+		jal im_two_two_write_output_location
 
 ;	one_left:
 ;		;; 1 left
@@ -182,11 +182,11 @@ im_two_one_write_output_elements:
 ;		addi r11, r10, 0x01
 ;		; write_output_location(r26, r11, -0x01, y_offset)
 ;		and r8, r26, r26
-;		jal im_two_one_write_output_location
+;		jal im_two_two_write_output_location
 ;		addi r11, r10, 0x02
 ;		; write_output_location(r27, r11, -0x01, y_offset)
 ;		and r8, r27, r27
-;		jal im_two_one_write_output_location
+;		jal im_two_two_write_output_location
 
 	zero_left:
 		;; 0 left
@@ -198,15 +198,15 @@ im_two_one_write_output_elements:
 		addi r11, r10, 0x00
 		; write_output_location(r26, r11, 0x00, y_offset)
 		and r8, r26, r26
-		jal im_two_one_write_output_location
+		jal im_two_two_write_output_location
 		addi r11, r10, 0x01
 		; write_output_location(r27, r11, 0x00, y_offset)
 		and r8, r27, r27
-		jal im_two_one_write_output_location			;;;;;;;;;;;;;;;;;;; THIS HERE IS CULPRIT
+		jal im_two_two_write_output_location			;;;;;;;;;;;;;;;;;;; THIS HERE IS CULPRIT
 		addi r11, r10, 0x02
 		; write_output_location(r28, r11, 0x00, y_offset)
 		and r8, r28, r28
-		jal im_two_one_write_output_location
+		jal im_two_two_write_output_location
 
 ;	one_right:
 ;		;; 1 right
@@ -218,15 +218,15 @@ im_two_one_write_output_elements:
 ;		addi r11, r10, 0x00
 ;		; write_output_location(r27, r11, 0x01, y_offset)
 ;		and r8, r27, r27
-;		jal im_two_one_write_output_location
+;		jal im_two_two_write_output_location
 ;		addi r11, r10, 0x01
 ;		; write_output_location(r28, r11, 0x01, y_offset)
 ;		and r8, r28, r28
-;		jal im_two_one_write_output_location
+;		jal im_two_two_write_output_location
 ;		addi r11, r10, 0x02
 ;		; write_output_location(r29, r11, 0x01, y_offset)
 ;		and r8, r29, r29
-;		jal im_two_one_write_output_location
+;		jal im_two_two_write_output_location
 
 	two_right:
 		;; 2 right
@@ -238,11 +238,11 @@ im_two_one_write_output_elements:
 		addi r11, r10, 0x00
 		; write_output_location(r28, r11, 0x02, y_offset)
 		and r8, r28, r28
-		jal im_two_one_write_output_location
+		jal im_two_two_write_output_location
 		addi r11, r10, 0x01
 		; write_output_location(r29, r11, 0x02, y_offset)
 		and r8, r29, r29
-		jal im_two_one_write_output_location
+		jal im_two_two_write_output_location
 	
 ;	three_right:
 ;		;; 3 right
@@ -254,7 +254,7 @@ im_two_one_write_output_elements:
 ;		addi r11, r10, 0x00
 ;		; write_output_location(r29, r11, 0x03, y_offset)
 ;		and r8, r29, r29
-;		jal im_two_one_write_output_location
+;		jal im_two_two_write_output_location
 		
 	write_return:
 		; load r31 <- r24
@@ -271,7 +271,7 @@ halt
 ; r11 = column_index - already assigned
 ; r9 = x_offset - assignment already done
 ; r7 = y_offset - no assignment needed
-im_two_one_write_output_location:
+im_two_two_write_output_location:
 	mul r12, r4, r4
 	addi r12, r12, 0x03	; (the padded width) r12 = (r4*r4 + 3) >> 2 << 2
 	shri r12, r12, 0x02
