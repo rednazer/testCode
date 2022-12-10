@@ -115,10 +115,11 @@ imTwoColStrideOneTwoD:
 	bgzi im_two_one_y_loop_start	; branch to start of y loop
 	
 	;; Pad the ends of rows before returning
-	lih r5, 0x00000		; init x loop var = 0
-	lil r5, 0x00000
-	addi r12, r5, 0x02
-	vsplat 0b1111, v3, r12
+	lih r5, 0x0000		; init x loop var = 0
+	lil r5, 0x0000
+	lih r18, 0x0000
+	lil r18, 0x0000
+	vsplat 0b1111, v3, r18
 	im_two_one_align_padding:
 		; Gets the end of the line
 		mul r12, r4, r4		; vals written to this - 1
@@ -131,8 +132,6 @@ imTwoColStrideOneTwoD:
 		shli r14, r14, 0x02
 		add r14, r14, r2
 		vldi 0b1111, v2, [r14+=0x00]
-		lih r18, 0x0000
-		lil r18, 0x0000
 		
 		; Get difference between aligned and unaligned (0-3)
 		sub r15, r13, r12
