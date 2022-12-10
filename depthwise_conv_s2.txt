@@ -55,12 +55,12 @@ depthwise_convolution_stride2:
 	lih r9, 0x0000
 	lil r9, 0x0000		; Z loop var
 	
-	layer_loop:
+	s2_layer_loop:
 		;; im2col (stride 2 2d)
-		; r1 = Location 2 + ( ((width+2+3)>>2<<2) * (width+2) * (curr depth) * FLOAT_SIZE)
-		; r2 = Location 3 + ( (width^2+3)>>2<<4 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (output)
+		; r1 = Location 2 + ( ((width+2+3)>>2<<2) * (width+2) * (curr depth) * FLOAT_SIZE )
+		; r2 = Location 3 + ( ((width+1)/2)^2+7)>>3<<5 * 9 * (curr depth) ) ;FloatSizeBakedInto<<4 (output)
 		; r3 = width (x and y) - pad matrix (width + 2)
-		; r4 = num im2col columns (per row)- this is calculated from width (width + 2 - 2)
+		; r4 = num im2col columns (per row)- this is calculated from width (width + 2)/2
 		
 		;peek_stack()
 		ld36 r1, [r30+0x00]
@@ -78,7 +78,9 @@ depthwise_convolution_stride2:
 		mul r12, r12, r9
 		shli r12, r12, 0x02			; r1 offset
 		
-		mul r15, r5, r5
+		addi r16, r5, 0x01
+		shri r16, r16, 0x01
+		mul r15, r16, r16
 		addi r15, r15, 0x07
 		shri r15, r15, 0x03
 		shli r15, r15, 0x05
@@ -90,7 +92,7 @@ depthwise_convolution_stride2:
 		add r1, r2, r12
 		add r2, r3, r15
 		addi r3, r5, 0x02
-		addi r4, r5, 0x00
+		addi r4, r16, 0x00
 		
 		; CALL IM2COL
 		bkpt 0x03
@@ -145,7 +147,7 @@ depthwise_convolution_stride2:
 	; branch if r9 < r6 (r9-r6<0)
 	addi r9, r9, 0x01
 	cmp r9, r6
-	blzi layer_loop
+	blzi s2_layer_loop
 	
 	; Return to caller function
 	ld36 r1, [r30+0x00]
@@ -162,4 +164,4 @@ depthwise_convolution_stride2:
 	ld36 r31, [r30+0x50]
 	addi r30, r30, 0x58
 	jmpr r31, 0x00
-	halt
+halt

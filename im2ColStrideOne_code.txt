@@ -238,7 +238,7 @@ im_two_one_write_output_elements:
 		lil r9, 0x0000
 		subi r9, r9, 0x02	; Load -0x02 into r9 (how left or right from start)
 		cmpi r5, 0x00
-		bezi one_left
+		bezi im_two_one_one_left
 		addi r11, r10, 0x02
 		;write_output_location(r26, r11, -0x02, y_offset)
 		; r11 = column_index - already assigned
@@ -248,15 +248,15 @@ im_two_one_write_output_elements:
 		and r8, r26, r26
 		jal im_two_one_write_output_location
 
-	one_left:
+	im_two_one_one_left:
 		;; 1 left
 		; Skip if r5 == 0 and if r5 + 1 >= r3
 		addi r9, r9, 0x01
 		cmpi r5, 0x00
-		bezi zero_left
+		bezi im_two_one_zero_left
 		addi r19, r5, 0x01
 		cmp r19, r3
-		bgei zero_left
+		bgei im_two_one_zero_left
 		addi r11, r10, 0x01
 		; write_output_location(r26, r11, -0x01, y_offset)
 		and r8, r26, r26
@@ -266,13 +266,13 @@ im_two_one_write_output_elements:
 		and r8, r27, r27
 		jal im_two_one_write_output_location
 
-	zero_left:
+	im_two_one_zero_left:
 		;; 0 left
 		; Skip if r1 + 2 >= r3
 		addi r9, r9, 0x01
 		addi r19, r5, 0x02
 		cmp r19, r3
-		bgei one_right
+		bgei im_two_one_one_right
 		addi r11, r10, 0x00
 		; write_output_location(r26, r11, 0x00, y_offset)
 		and r8, r26, r26
@@ -286,13 +286,13 @@ im_two_one_write_output_elements:
 		and r8, r28, r28
 		jal im_two_one_write_output_location
 
-	one_right:
+	im_two_one_one_right:
 		;; 1 right
 		; Skip if r1 + 3 >= r3
 		addi r9, r9, 0x01
 		addi r19, r5, 0x03
 		cmp r19, r3
-		bgei two_right
+		bgei im_two_one_two_right
 		addi r11, r10, 0x00
 		; write_output_location(r27, r11, 0x01, y_offset)
 		and r8, r27, r27
@@ -306,13 +306,13 @@ im_two_one_write_output_elements:
 		and r8, r29, r29
 		jal im_two_one_write_output_location
 
-	two_right:
+	im_two_one_two_right:
 		;; 2 right
 		; Skip if r1 + 4 >= r3
 		addi r9, r9, 0x01
 		addi r19, r5, 0x04
 		cmp r19, r3
-		bgei three_right
+		bgei im_two_one_three_right
 		addi r11, r10, 0x00
 		; write_output_location(r28, r11, 0x02, y_offset)
 		and r8, r28, r28
@@ -322,19 +322,19 @@ im_two_one_write_output_elements:
 		and r8, r29, r29
 		jal im_two_one_write_output_location
 	
-	three_right:
+	im_two_one_three_right:
 		;; 3 right
 		; Skip if r1 + 5 >= r3
 		addi r9, r9, 0x01
 		addi r19, r5, 0x05
 		cmp r19, r3
-		bgei write_return
+		bgei im_two_one_write_return
 		addi r11, r10, 0x00
 		; write_output_location(r29, r11, 0x03, y_offset)
 		and r8, r29, r29
 		jal im_two_one_write_output_location
 		
-	write_return:
+	im_two_one_write_return:
 		; load r31 <- r24
 		and r31, r24, r24
 		jmpr r31, 0x0
