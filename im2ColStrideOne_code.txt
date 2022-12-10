@@ -117,8 +117,8 @@ imTwoColStrideOneTwoD:
 	;; Pad the ends of rows before returning
 	lih r5, 0x0000		; init x loop var = 0
 	lil r5, 0x0000
-	lih r18, 0x0000
-	lil r18, 0x0000
+	lih r18, 0x0FFF
+	lil r18, 0xFFFF
 	vsplat 0b1111, v3, r18
 	im_two_one_align_padding:
 		; Gets the end of the line
