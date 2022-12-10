@@ -1,3 +1,6 @@
+; Includes
+;%include im2ColStrideOne_Code.txt
+
 ; Setup regs
 lil r1, 0x0000
 lil r2, 0x1000
@@ -112,7 +115,7 @@ depthwise_convolution_stride1:
 		ld36 r6, [r30+0x28]
 		
 		lih r12, 0x00
-		lil r12, 0x0c
+		lil r12, 0x10
 		mul r12, r12, r9
 		shli r12, r12, 0x02			; r1 offset
 		
