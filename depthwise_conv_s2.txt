@@ -99,7 +99,7 @@ depthwise_convolution_stride2:
 		
 		;; MatMul
 		; r1 = Location 4 + 12 * (curr depth) * FLOAT_SIZE (Input)
-		; r2 = Location 3 + ( (width^2+3)>>2<<4 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (input)
+		; r2 = Location 3 + ( ( ((width+1)/2)^2+7)>>3<<5 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (input)
 		; r3 = Location 1 + (width)^2 * (curr depth) * FLOAT_SIZE (Output)
 		; r4 = width of matrix - common length (3x3 for filter size)
 		; r5 = # cols for r1 (A matrix) - number of filters
@@ -118,10 +118,12 @@ depthwise_convolution_stride2:
 		mul r12, r12, r9
 		shli r12, r12, 0x02			; r1 offset
 		
-		mul r13, r5, r5
-		addi r13, r13, 0x03
-		shri r13, r13, 0x02
-		shli r13, r13, 0x02			; r6
+		addi r16, r5, 0x01
+		shri r16, r16, 0x01
+		mul r13, r16, r16
+		addi r13, r13, 0x07
+		shri r13, r13, 0x03
+		shli r13, r13, 0x03			; r6
 		shli r14, r13, 0x02
 		lih r16, 0x00
 		lil r16, 0x09
