@@ -1,8 +1,8 @@
 ; Define initial reg vals
 lil r1, 0x0000
 lil r2, 0x1000
-lil r3, 9
-lil r4, 7			; (r3-2)
+lil r3, 10
+lil r4, 8			; (r3-2)
 lil r30, 0xF000
 
 ; Call func
