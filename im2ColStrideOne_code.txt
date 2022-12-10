@@ -112,7 +112,6 @@ imTwoColStrideOneTwoD:
 	cmp r3, r6
 	bgzi im_two_one_y_loop_start	; branch to start of y loop
 	
-	
 	;; Pad the ends of rows before returning
 	lih r5, 0x00000		; init x loop var = 0
 	lil r5, 0x00001

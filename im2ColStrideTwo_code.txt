@@ -123,6 +123,64 @@ imTwoColStrideTwoTwoD:
 	cmp r3, r6
 	bgzi im_two_two_y_loop_start	; branch to start of y loop
 
+	;; Pad the ends of rows before returning
+	lih r5, 0x00000		; init x loop var = 0
+	lil r5, 0x00001
+	lih r18, 0x0FFF
+	lil r18, 0xFFFF
+	vsplat 0b1111, v3, r18
+	im_two_one_align_padding:
+		; Gets the end of the line
+		mul r12, r4, r4		; vals written to this - 1
+		addi r13, r12, 0x03	; (4 aligned width) r12 = (r4*r4 + 3) >> 2 << 2
+		shri r13, r13, 0x02
+		shli r13, r13, 0x02
+		addi r16, r12, 0x07	; (8 aligned width) r12 = (r4*r4 + 7) >> 2 << 2
+		shri r16, r16, 0x02
+		shli r16, r16, 0x02
+		; Pull last vector
+		subi r15, r5, 0x01
+		mul r14, r16, r15
+		add r14, r14, r13
+		subi r14, r14, 0x04
+		shli r14, r14, 0x02
+		add r14, r14, r2
+		vldi 0b1111, v2, [r14+=0x00]
+		
+		; Get difference between aligned and unaligned (0-3)
+		sub r15, r13, r12
+		; If 0, skip
+		cmpi r15, 0x00
+		bezi im_two_one_end_align
+		
+		; If 1, fill last
+		vsplat 0b1000, v2, r18
+		cmpi r15, 0x01
+		bezi im_two_one_end_align
+		
+		; If 2, fill last two
+		vsplat 0b1100, v2, r18
+		cmpi r15, 0x02
+		bezi im_two_one_end_align
+		
+		; If 3, fill last three
+		vsplat 0b1110, v2, r18
+		
+		im_two_one_end_align:
+		vsti 0b1111, [r14+=0x00], v2
+		
+		; Check if 4 or 8 aligned
+		cmp r16, r13		; if r16 = r13 then write 0 vector to end
+		bezi eight_aligned
+		addi r14, r14, 0x010
+		vsti 0b1111, [r14+=0x00], v3
+		
+		eight_aligned:
+		
+	; Branch to align_padding
+	addi r5, r5, 0x01
+	cmpi r5, 0x09
+	blei im_two_one_align_padding
 
 	;; If y loop not branched to, then im2col is done, so return here
 	; load r31 <- r23
@@ -170,24 +228,6 @@ im_two_two_write_output_elements:
 		and r8, r26, r26
 		jal im_two_two_write_output_location
 
-;	one_left:
-;		;; 1 left
-;		; Skip if r5 == 0 and if r5 + 1 >= r3
-;		addi r9, r9, 0x01
-;		cmpi r5, 0x00
-;		bezi zero_left
-;		addi r19, r5, 0x01
-;		cmp r19, r3
-;		bgei zero_left
-;		addi r11, r10, 0x01
-;		; write_output_location(r26, r11, -0x01, y_offset)
-;		and r8, r26, r26
-;		jal im_two_two_write_output_location
-;		addi r11, r10, 0x02
-;		; write_output_location(r27, r11, -0x01, y_offset)
-;		and r8, r27, r27
-;		jal im_two_two_write_output_location
-
 	zero_left:
 		;; 0 left
 		; Skip if r1 + 2 >= r3
@@ -208,26 +248,6 @@ im_two_two_write_output_elements:
 		and r8, r28, r28
 		jal im_two_two_write_output_location
 
-;	one_right:
-;		;; 1 right
-;		; Skip if r1 + 3 >= r3
-;		addi r9, r9, 0x01
-;		addi r19, r5, 0x03
-;		cmp r19, r3
-;		bgei two_right
-;		addi r11, r10, 0x00
-;		; write_output_location(r27, r11, 0x01, y_offset)
-;		and r8, r27, r27
-;		jal im_two_two_write_output_location
-;		addi r11, r10, 0x01
-;		; write_output_location(r28, r11, 0x01, y_offset)
-;		and r8, r28, r28
-;		jal im_two_two_write_output_location
-;		addi r11, r10, 0x02
-;		; write_output_location(r29, r11, 0x01, y_offset)
-;		and r8, r29, r29
-;		jal im_two_two_write_output_location
-
 	two_right:
 		;; 2 right
 		; Skip if r1 + 4 >= r3
@@ -243,19 +263,7 @@ im_two_two_write_output_elements:
 		; write_output_location(r29, r11, 0x02, y_offset)
 		and r8, r29, r29
 		jal im_two_two_write_output_location
-	
-;	three_right:
-;		;; 3 right
-;		; Skip if r1 + 5 >= r3
-;		addi r9, r9, 0x01
-;		addi r19, r5, 0x05
-;		cmp r19, r3
-;		bgei write_return
-;		addi r11, r10, 0x00
-;		; write_output_location(r29, r11, 0x03, y_offset)
-;		and r8, r29, r29
-;		jal im_two_two_write_output_location
-		
+
 	write_return:
 		; load r31 <- r24
 		and r31, r24, r24
