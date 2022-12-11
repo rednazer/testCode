@@ -40,7 +40,11 @@ alignMatrix:
 	shri r12, r12, 0x02
 	shli r12, r12, 0x02
 	
+	mul r15, r12, r3	; Offset for each filter
+	shli r15, r15, 0x02
+	
 	filter_loop_start:
+		add r16, r15, r2
 	
 		lih r9, 0x0000
 		lil r9, 0x0000
@@ -80,7 +84,7 @@ alignMatrix:
 					add r13, r13, r6
 					shli r13, r13, 0x02
 				
-					add r14, r13, r2
+					add r14, r13, r16
 					vsti 0b1111, [r14+=0x00], v1
 
 			addi r6, r6, 0x04
