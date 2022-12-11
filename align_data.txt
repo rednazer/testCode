@@ -1,7 +1,7 @@
 lil r1, 0x0000
 lil r2, 0x1000
 lil r3, 7
-lil r4, 1
+lil r4, 2
 lil r30, 0x3000
 
 bkpt 0x01
@@ -44,7 +44,8 @@ alignMatrix:
 	shli r15, r15, 0x02
 	
 	filter_loop_start:
-		add r16, r15, r2
+		mul r17, r15, r5
+		add r16, r17, r2
 	
 		lih r9, 0x0000
 		lil r9, 0x0000
