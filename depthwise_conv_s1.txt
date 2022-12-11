@@ -1,11 +1,66 @@
 ; Setup regs
-lil r1, 0x0000
-lil r2, 0x1000
-lil r3, 0x2000
-lil r4, 0x3000
-lil r5, 16
-lil r6, 3
+lil r1, 0x1000
+lil r2, 0x3000
+lil r3, 0x5000
+lil r4, 0x7000
+lil r5, 7
+lil r6, 1
 lil r30, 0x7000
+
+lil r10, 0x0000
+lih r10, 0x0FE0		; the number 1 in floating point
+lil r12, 0x00
+lih r12, 0x00
+vsplat 0b1111, v20, r12 ; Zeros
+vsplat 0b1111, v21, r12
+vsplat 0b1000, v21, r10	; Middle with 1
+
+lih r13, 0x00
+lil r13, 0x10
+; Use r11
+fill_weights:
+	mul r15, r11, r13
+	add r15, r4, r15		; filter location
+	vsti 0b1111, [r15+=0x10], v20
+	vsti 0b1111, [r15+=0x10], v21
+	vsti 0b1111, [r15+=0x10], v20
+	vsti 0b1111, [r15+=0x10], v20
+	
+addi r11, r11, 0x01
+cmp r11, r6; # r11 < num filters
+blzi layer_loop
+
+lil r11, 0x00
+lil r13, 0x00
+lil r14, 0x20
+fill_matrix:
+	;vsplat 0b1111, v21, r12
+	
+	addi r13, r13, 0x01
+	vsplat 0b0001, v21, r13
+	addi r13, r13, 0x01
+	vsplat 0b0010, v21, r13
+	addi r13, r13, 0x01
+	vsplat 0b0100, v21, r13
+	addi r13, r13, 0x01
+	vsplat 0b1000, v21, r13
+	
+	mul r15, r11, r14
+	add r15, r15, r1
+	vstr 0b1111, [r15+=0x10], v21
+	
+	addi r13, r13, 0x01
+	vsplat 0b0001, v21, r13
+	addi r13, r13, 0x01
+	vsplat 0b0010, v21, r13
+	addi r13, r13, 0x01
+	vsplat 0b0100, v21, r13
+	vsplat 0b0001, v21, r12
+	vstr 0b1111, [r15+=0x10], v21
+	
+addi r11, r11, 0x01
+cmp r11, r5
+blzi fill_matrix
 
 ; call function
 bkpt 0x01
