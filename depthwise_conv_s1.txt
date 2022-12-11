@@ -5,7 +5,7 @@ lil r3, 0x5000
 lil r4, 0x7000
 lil r5, 7
 lil r6, 1
-lil r30, 0x7000
+lil r30, 0x9000
 
 lil r11, 0x0000
 lih r11, 0x0FE0		; the number 1 in floating point
