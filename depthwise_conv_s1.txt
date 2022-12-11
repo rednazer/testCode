@@ -30,7 +30,7 @@ addi r11, r11, 0x01
 cmp r11, r6; # r11 < num filters
 blzi layer_loop
 
-
+lih r11, 0x00
 lil r11, 0x00
 lil r13, 0x00
 lil r14, 0x20
