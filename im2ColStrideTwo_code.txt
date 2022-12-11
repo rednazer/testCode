@@ -1,16 +1,16 @@
 ; Define initial reg vals
-lil r1, 0x0000
-lil r2, 0x1000
-lil r3, 0x000a
-lil r4, 4			; (r3>>1) ->9/2=4
-lil r30, 0xF000
+;lil r1, 0x0000
+;lil r2, 0x1000
+;lil r3, 0x000a
+;lil r4, 4			; (r3>>1) ->9/2=4
+;lil r30, 0xF000
 
 ; Call func
-bkpt 0x01
-jal imTwoColStrideTwoTwoD
-bkpt 0x10
+;bkpt 0x01
+;jal imTwoColStrideTwoTwoD
+;bkpt 0x10
 
-halt
+;halt
 
 ;; Pull in the needed values for the current convolution
 ;; input_data start location, output_data write location

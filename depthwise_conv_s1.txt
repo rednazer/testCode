@@ -49,6 +49,7 @@ depthwise_convolution_stride1:
 	
 	; pad the matrix
 	; push_stack_caller(padMatrix)
+	jal padMatrix
 	bkpt 0x02
 	
 	;; For loop iterating through each z layer
@@ -93,6 +94,7 @@ depthwise_convolution_stride1:
 		addi r4, r5, 0x00
 		
 		; CALL IM2COL
+		jal imTwoColStrideOneTwoD
 		bkpt 0x03
 		
 		;; MatMul
@@ -142,6 +144,7 @@ depthwise_convolution_stride1:
 		addi r6, r13, 0x00
 		
 		; CALL MATMUL
+		jal matmulmodule
 		bkpt 0x04
 		
 	;; Check loop condition
