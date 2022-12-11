@@ -13,7 +13,7 @@ lil r12, 0x00
 lih r12, 0x00
 vsplat 0b1111, v20, r12 ; Zeros
 vsplat 0b1111, v21, r12
-vsplat 0b1000, v21, r10	; Middle with 1
+vsplat 0b0001, v21, r10	; Middle with 1
 
 lih r13, 0x00
 lil r13, 0x10
@@ -55,7 +55,7 @@ fill_matrix:
 	vsplat 0b0010, v21, r13
 	addi r13, r13, 0x01
 	vsplat 0b0100, v21, r13
-	vsplat 0b0001, v21, r12
+	vsplat 0b1000, v21, r12
 	vsti 0b1111, [r15+=0x10], v21
 	
 addi r11, r11, 0x01
