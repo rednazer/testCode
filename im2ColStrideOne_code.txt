@@ -120,7 +120,7 @@ imTwoColStrideOneTwoD:
 		cmp r25, r5				; (padded width) - (r5 + 4) > 0
 		bgzi im_two_one_x_loop_start	; Branch to start of x loop
 		
-		bkpt 0x06
+		;bkpt 0x06
 		
 	; Branch to y_loop_start (check if r6 + 1 == width of input data)
 	addi r6, r6, 0x01

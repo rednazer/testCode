@@ -20,7 +20,6 @@ halt
 ; r4 = Filter input location						- location 4
 ; r5 = width of matrix (x and y)
 ; r6 = depth of matrix (z) (number of filters)
-;
 depthwise_convolution_stride1:
 	; Stack stuff
 	subi r30, r30, 0x58
@@ -41,7 +40,6 @@ depthwise_convolution_stride1:
 	; r2 = Location 2 (ouptut)
 	; r3 = width (x and y length)
 	; r4 = depth (z length)
-	
 	; Reorganizes Registers for Padding
 	; r1 <= r1; r2 <= r2; r3 <= r5; r4 <= r6
 	and r3, r5, r5
@@ -62,7 +60,6 @@ depthwise_convolution_stride1:
 		; r2 = Location 3 + ( (width^2+7)>>3<<5 * 9 * (curr depth) ;FloatSizeBakedInto<<4) (output)
 		; r3 = width (x and y) - pad matrix (width + 2)
 		; r4 = num im2col columns (per row)- this is calculated from width (width + 2 - 2)
-		
 		;peek_stack()
 		ld36 r1, [r30+0x00]
 		ld36 r2, [r30+0x08]
@@ -104,7 +101,6 @@ depthwise_convolution_stride1:
 		; r4 = width of matrix - common length (3x3 for filter size)
 		; r5 = # cols for r1 (A matrix) - number of filters
 		; r6 = # rows in r2 (B matrix) - number of im2col columns
-		
 		;peek_stack()
 		ld36 r1, [r30+0x00]
 		ld36 r2, [r30+0x08]
@@ -169,10 +165,6 @@ depthwise_convolution_stride1:
 	addi r30, r30, 0x58
 	jmpr r31, 0x00
 	halt
-
-
-
-
 
 ; Include needed subfiles
 %include "padding_code.txt"
