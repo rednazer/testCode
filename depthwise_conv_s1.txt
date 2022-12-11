@@ -30,6 +30,7 @@ addi r11, r11, 0x01
 cmp r11, r6; # r11 < num filters
 blzi layer_loop
 
+
 lil r11, 0x00
 lil r13, 0x00
 lil r14, 0x20
@@ -61,6 +62,10 @@ fill_matrix:
 addi r11, r11, 0x01
 cmp r11, r5
 blzi fill_matrix
+
+addi r11, r11, 0x04
+mul r15, r11, r14
+add r1, r15, r1
 
 ; call function
 bkpt 0x01
