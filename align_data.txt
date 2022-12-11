@@ -36,6 +36,10 @@ alignMatrix:
 	lih r20, 0x0000		; 0 value
 	lil r20, 0x0000
 	
+	addi r12, r3, 0x03	; Length of padded row
+	shri r12, r12, 0x02
+	shli r12, r12, 0x02
+	
 	filter_loop_start:
 	
 		lih r9, 0x0000
@@ -70,6 +74,13 @@ alignMatrix:
 				addi r1, r1, 0x04
 				vsplat 0b1000, v1, r8
 				cmpi r7, 0x04		; 4+ values left
+				
+				mul r13, r12, r9
+				add r13, r13, r6
+				shli r13, r13, 0x02
+				
+				add r14, r13, r2
+				vsti 0b1111, [r14+=0x00], v1
 			
 				end_of_row:
 			addi r6, r6, 0x04
