@@ -7,13 +7,13 @@ lil r5, 7
 lil r6, 1
 lil r30, 0x7000
 
-lil r10, 0x0000
-lih r10, 0x0FE0		; the number 1 in floating point
+lil r11, 0x0000
+lih r11, 0x0FE0		; the number 1 in floating point
 lil r12, 0x00
 lih r12, 0x00
 vsplat 0b1111, v20, r12 ; Zeros
 vsplat 0b1111, v21, r12
-vsplat 0b0001, v21, r10	; Middle with 1
+vsplat 0b0001, v21, r11	; Middle with 1
 
 lih r13, 0x00
 lil r13, 0x10
@@ -62,10 +62,6 @@ fill_matrix:
 addi r11, r11, 0x01
 cmp r11, r5
 blzi fill_matrix
-
-addi r11, r11, 0x04
-mul r15, r11, r14
-add r1, r15, r1
 
 ; call function
 bkpt 0x01
