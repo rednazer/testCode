@@ -79,10 +79,10 @@ alignMatrix:
 				add r13, r13, r6
 				shli r13, r13, 0x02
 				
-				add r14, r13, r2
-				vsti 0b1111, [r14+=0x00], v1
-			
 				end_of_row:
+					add r14, r13, r2
+					vsti 0b1111, [r14+=0x00], v1
+
 			addi r6, r6, 0x04
 			cmp r6, r3
 			blzi row_loop_start
